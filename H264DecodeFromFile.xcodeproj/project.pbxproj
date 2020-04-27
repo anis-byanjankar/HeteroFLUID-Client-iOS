@@ -19,6 +19,7 @@
 		F853AEEF2452CE440037DDED /* H264.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEEC2452CE430037DDED /* H264.h264 */; };
 		F853AEF02452CE440037DDED /* nature.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEED2452CE440037DDED /* nature.h264 */; };
 		F853AEF22452E51A0037DDED /* testS.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEF12452E51A0037DDED /* testS.h264 */; };
+		F8C1A8F424567F3100EA9564 /* output.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F8C1A8F324567F3100EA9564 /* output.h264 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		F853AEEC2452CE430037DDED /* H264.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = H264.h264; sourceTree = "<group>"; };
 		F853AEED2452CE440037DDED /* nature.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = nature.h264; sourceTree = "<group>"; };
 		F853AEF12452E51A0037DDED /* testS.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = testS.h264; sourceTree = "<group>"; };
+		F8C1A8F324567F3100EA9564 /* output.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = output.h264; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +75,7 @@
 				F853AEEB2452CE430037DDED /* sample2.h264 */,
 				F853AEF12452E51A0037DDED /* testS.h264 */,
 				F853AEE92452CE150037DDED /* mtv.h264 */,
+				F8C1A8F324567F3100EA9564 /* output.h264 */,
 				F853AED32452CCEE0037DDED /* AppDelegate.swift */,
 				F853AED52452CCEE0037DDED /* SceneDelegate.swift */,
 				F853AED72452CCEE0037DDED /* ViewController.swift */,
@@ -145,6 +148,7 @@
 			files = (
 				F853AEEE2452CE440037DDED /* sample2.h264 in Resources */,
 				F853AEEF2452CE440037DDED /* H264.h264 in Resources */,
+				F8C1A8F424567F3100EA9564 /* output.h264 in Resources */,
 				F853AEE02452CCF30037DDED /* LaunchScreen.storyboard in Resources */,
 				F853AEEA2452CE150037DDED /* mtv.h264 in Resources */,
 				F853AEDD2452CCF30037DDED /* Assets.xcassets in Resources */,

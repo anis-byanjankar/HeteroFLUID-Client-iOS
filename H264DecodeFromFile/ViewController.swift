@@ -26,7 +26,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+        configDecoding()
+    }
+    
+    func configDecoding(){
         
         //Comment 1. Layer which will process the CMSample packet and parse CMSampleBuffers.
         videoLayer = AVSampleBufferDisplayLayer()
@@ -57,11 +60,7 @@ class ViewController: UIViewController {
             let url = URL(fileURLWithPath: filePath!)
             self.decodeFile(url)
         }
-        
-        
     }
-    
-    
     
     func decodeFile(_ fileURL: URL) {
         
