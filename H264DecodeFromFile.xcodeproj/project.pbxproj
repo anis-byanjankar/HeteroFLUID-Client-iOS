@@ -13,6 +13,12 @@
 		F853AEDB2452CCEE0037DDED /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F853AED92452CCEE0037DDED /* Main.storyboard */; };
 		F853AEDD2452CCF30037DDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F853AEDC2452CCF30037DDED /* Assets.xcassets */; };
 		F853AEE02452CCF30037DDED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F853AEDE2452CCF30037DDED /* LaunchScreen.storyboard */; };
+		F853AEE82452CD170037DDED /* VideoFileReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F853AEE72452CD170037DDED /* VideoFileReader.swift */; };
+		F853AEEA2452CE150037DDED /* mtv.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEE92452CE150037DDED /* mtv.h264 */; };
+		F853AEEE2452CE440037DDED /* sample2.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEEB2452CE430037DDED /* sample2.h264 */; };
+		F853AEEF2452CE440037DDED /* H264.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEEC2452CE430037DDED /* H264.h264 */; };
+		F853AEF02452CE440037DDED /* nature.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEED2452CE440037DDED /* nature.h264 */; };
+		F853AEF22452E51A0037DDED /* testS.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEF12452E51A0037DDED /* testS.h264 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +30,12 @@
 		F853AEDC2452CCF30037DDED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F853AEDF2452CCF30037DDED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F853AEE12452CCF30037DDED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F853AEE72452CD170037DDED /* VideoFileReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoFileReader.swift; sourceTree = "<group>"; };
+		F853AEE92452CE150037DDED /* mtv.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = mtv.h264; sourceTree = "<group>"; };
+		F853AEEB2452CE430037DDED /* sample2.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = sample2.h264; sourceTree = "<group>"; };
+		F853AEEC2452CE430037DDED /* H264.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = H264.h264; sourceTree = "<group>"; };
+		F853AEED2452CE440037DDED /* nature.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = nature.h264; sourceTree = "<group>"; };
+		F853AEF12452E51A0037DDED /* testS.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = testS.h264; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,9 +68,15 @@
 		F853AED22452CCEE0037DDED /* H264DecodeFromFile */ = {
 			isa = PBXGroup;
 			children = (
+				F853AEEC2452CE430037DDED /* H264.h264 */,
+				F853AEED2452CE440037DDED /* nature.h264 */,
+				F853AEEB2452CE430037DDED /* sample2.h264 */,
+				F853AEF12452E51A0037DDED /* testS.h264 */,
+				F853AEE92452CE150037DDED /* mtv.h264 */,
 				F853AED32452CCEE0037DDED /* AppDelegate.swift */,
 				F853AED52452CCEE0037DDED /* SceneDelegate.swift */,
 				F853AED72452CCEE0037DDED /* ViewController.swift */,
+				F853AEE72452CD170037DDED /* VideoFileReader.swift */,
 				F853AED92452CCEE0037DDED /* Main.storyboard */,
 				F853AEDC2452CCF30037DDED /* Assets.xcassets */,
 				F853AEDE2452CCF30037DDED /* LaunchScreen.storyboard */,
@@ -125,9 +143,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F853AEEE2452CE440037DDED /* sample2.h264 in Resources */,
+				F853AEEF2452CE440037DDED /* H264.h264 in Resources */,
 				F853AEE02452CCF30037DDED /* LaunchScreen.storyboard in Resources */,
+				F853AEEA2452CE150037DDED /* mtv.h264 in Resources */,
 				F853AEDD2452CCF30037DDED /* Assets.xcassets in Resources */,
 				F853AEDB2452CCEE0037DDED /* Main.storyboard in Resources */,
+				F853AEF02452CE440037DDED /* nature.h264 in Resources */,
+				F853AEF22452E51A0037DDED /* testS.h264 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +163,7 @@
 			files = (
 				F853AED82452CCEE0037DDED /* ViewController.swift in Sources */,
 				F853AED42452CCEE0037DDED /* AppDelegate.swift in Sources */,
+				F853AEE82452CD170037DDED /* VideoFileReader.swift in Sources */,
 				F853AED62452CCEE0037DDED /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -285,13 +309,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YJF2WJ9A89;
+				DEVELOPMENT_TEAM = CHDJX2H9Y9;
 				INFOPLIST_FILE = H264DecodeFromFile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile;
+				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -303,13 +327,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = YJF2WJ9A89;
+				DEVELOPMENT_TEAM = CHDJX2H9Y9;
 				INFOPLIST_FILE = H264DecodeFromFile/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile;
+				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
