@@ -71,7 +71,7 @@ class VideoFileReader: NSObject {
             if bytes > 0 {
                 streamBuffer.append(contentsOf: Array(tempArray[0..<bytes]))
             }
-            
+//            hex(data: tempArray)
             return bytes
         }
         
