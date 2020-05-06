@@ -23,4 +23,7 @@ struct RTPPacket {
     var timestamp: UInt32
     // Optional header extensions
     var extensions: Data?
+    
+    //For First Packet with [|SPS|00 00 00 01|PPS|00 00 00 01|IDR|] in a single packet.
+    var STAP: Bool?
 }

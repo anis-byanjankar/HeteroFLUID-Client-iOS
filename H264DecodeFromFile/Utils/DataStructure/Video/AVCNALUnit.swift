@@ -20,7 +20,8 @@ struct AVCNALUnit: NALUnit {
     }
     
     var type: NALUType {
-        return NALUType.init(rawValue: data![0] & 0x1f) ?? .VCL
+        
+        return NALUType.init(rawValue: data![0] & 0x1f) ?? .VCL//This is data[4] because we have 4 byte sentinel infornt of each NAL Packet
     }
     
     var isForbiddenZeroBitSet: Bool {

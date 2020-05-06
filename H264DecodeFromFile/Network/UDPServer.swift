@@ -11,11 +11,12 @@ import Network
 
 @available(macOS 10.14, *)
 class UDPServer: Connection {
+    func Receive() -> Data? {
+        return nil
+    }
     
     var delegate: TransportDelegate?
     
-
-    var queue: Queue!
     let MTU = 65536
     
     let port: NWEndpoint.Port
@@ -27,8 +28,6 @@ class UDPServer: Connection {
     
     init(port: UInt16,parser: RTPParser) throws {
         self.delegate = parser;
-        
-        self.queue = Queue()
 
         self.port = NWEndpoint.Port(rawValue: port)!
         listener = try! NWListener(using: .udp, on: self.port)
@@ -39,15 +38,7 @@ class UDPServer: Connection {
         listener.start(queue: .global(qos: .userInteractive))
     }
     
-    func Receive() -> Data? {
-        if (self.queue.Size() != 0){
-            let array = self.queue.dequeue()!
-            print("Buffer DEQUEUED")
-            return array
-        }
-        return nil
-       
-    }
+   
     
     func Send(data: Data) -> Bool {
         //TODO 
@@ -103,10 +94,9 @@ class UDPServer: Connection {
     func setupReceive() {
         connection.receive(minimumIncompleteLength: 1, maximumLength: MTU) { (data, _, isComplete, error) in
             if let data = data, !data.isEmpty {
-                //let message = String(data: data, encoding: .utf8)
-                //print("connection  did receive, data: \(data as NSData) string: \(message ?? "-")")
-//                self.queue.enqueue(element: data)
-                self.delegate?.datagramReceived([UInt8] (data))
+                DispatchQueue.global(qos: .userInteractive).sync {
+                    self.delegate?.datagramReceived([UInt8] (data))
+                }
             }
             if isComplete {
                 self.setupReceive() // Although it is reveived keep listening and keep gathering UDP packets.

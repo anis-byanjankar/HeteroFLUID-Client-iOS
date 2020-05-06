@@ -21,7 +21,6 @@
 		F8C1A8F724568B6F00EA9564 /* TCPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8F624568B6F00EA9564 /* TCPClient.swift */; };
 		F8C1A8F924568B8200EA9564 /* UDPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8F824568B8200EA9564 /* UDPServer.swift */; };
 		F8C1A8FB24568B9600EA9564 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8FA24568B9600EA9564 /* Connection.swift */; };
-		F8C1A8FE2457BF3300EA9564 /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8FD2457BF3300EA9564 /* Queue.swift */; };
 		F8C1A9012457DA5400EA9564 /* RTPParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A9002457DA5400EA9564 /* RTPParser.swift */; };
 		F8C1A9032457DA9900EA9564 /* TransportDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A9022457DA9900EA9564 /* TransportDelegate.swift */; };
 		F8C1A9052457F40000EA9564 /* RTPPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A9042457F40000EA9564 /* RTPPacket.swift */; };
@@ -35,6 +34,7 @@
 		F8C1A92F24580A9200EA9564 /* FragmentedNALUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A92824580A9200EA9564 /* FragmentedNALUnit.swift */; };
 		F8C1A93124580A9200EA9564 /* NALUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A92A24580A9200EA9564 /* NALUnit.swift */; };
 		F8C1A93424580ACD00EA9564 /* VideoDecoderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A93324580ACD00EA9564 /* VideoDecoderDelegate.swift */; };
+		F8C1A940245BDECA00EA9564 /* out.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F8C1A93F245BDECA00EA9564 /* out.h264 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,7 +56,6 @@
 		F8C1A8F624568B6F00EA9564 /* TCPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPClient.swift; sourceTree = "<group>"; };
 		F8C1A8F824568B8200EA9564 /* UDPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPServer.swift; sourceTree = "<group>"; };
 		F8C1A8FA24568B9600EA9564 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
-		F8C1A8FD2457BF3300EA9564 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		F8C1A9002457DA5400EA9564 /* RTPParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTPParser.swift; sourceTree = "<group>"; };
 		F8C1A9022457DA9900EA9564 /* TransportDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportDelegate.swift; sourceTree = "<group>"; };
 		F8C1A9042457F40000EA9564 /* RTPPacket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTPPacket.swift; sourceTree = "<group>"; };
@@ -70,6 +69,7 @@
 		F8C1A92824580A9200EA9564 /* FragmentedNALUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FragmentedNALUnit.swift; sourceTree = "<group>"; };
 		F8C1A92A24580A9200EA9564 /* NALUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NALUnit.swift; sourceTree = "<group>"; };
 		F8C1A93324580ACD00EA9564 /* VideoDecoderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDecoderDelegate.swift; sourceTree = "<group>"; };
+		F8C1A93F245BDECA00EA9564 /* out.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = out.h264; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -119,6 +119,7 @@
 				F8C1A8FC2457BF2700EA9564 /* Utils */,
 				F8C1A8F524568B3B00EA9564 /* Network */,
 				F853AEEC2452CE430037DDED /* H264.h264 */,
+				F8C1A93F245BDECA00EA9564 /* out.h264 */,
 				F853AEED2452CE440037DDED /* nature.h264 */,
 				F853AEE92452CE150037DDED /* mtv.h264 */,
 				F853AED32452CCEE0037DDED /* AppDelegate.swift */,
@@ -157,7 +158,6 @@
 			isa = PBXGroup;
 			children = (
 				F8C1A93D24580E2900EA9564 /* DataStructure */,
-				F8C1A8FD2457BF3300EA9564 /* Queue.swift */,
 				F8C1A90A2457F82500EA9564 /* HexPrinter.swift */,
 			);
 			path = Utils;
@@ -282,6 +282,7 @@
 				F853AEE02452CCF30037DDED /* LaunchScreen.storyboard in Resources */,
 				F853AEEA2452CE150037DDED /* mtv.h264 in Resources */,
 				F853AEDD2452CCF30037DDED /* Assets.xcassets in Resources */,
+				F8C1A940245BDECA00EA9564 /* out.h264 in Resources */,
 				F853AEDB2452CCEE0037DDED /* Main.storyboard in Resources */,
 				F853AEF02452CE440037DDED /* nature.h264 in Resources */,
 			);
@@ -348,7 +349,6 @@
 				F8C1A90D2457FB1400EA9564 /* RTPPacketDelegate.swift in Sources */,
 				F8C1A90B2457F82500EA9564 /* HexPrinter.swift in Sources */,
 				F8C1A9032457DA9900EA9564 /* TransportDelegate.swift in Sources */,
-				F8C1A8FE2457BF3300EA9564 /* Queue.swift in Sources */,
 				F853AED42452CCEE0037DDED /* AppDelegate.swift in Sources */,
 				F8C1A9222458003F00EA9564 /* Server.swift in Sources */,
 				F8C1A92F24580A9200EA9564 /* FragmentedNALUnit.swift in Sources */,

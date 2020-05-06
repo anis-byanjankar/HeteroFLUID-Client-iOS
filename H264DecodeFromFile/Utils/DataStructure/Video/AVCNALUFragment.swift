@@ -23,7 +23,13 @@ class AVCNALUFragment: NALUFragment {
         self.type = type
     }
     
-    var header: UInt8 {
+    var header: UInt8 {//Calssifies firstPacket, lastPacket and nalType. For first and last packet MASK HEADER WITH 0xE0 and for nalType mask with 0x1F.
+        //AOSP Code:
+        //----------
+        //    data[13] =
+        //             (firstPacket ? 0x80 : 0x00)
+        //             | (lastPacket ? 0x40 : 0x00)
+        //             | (nalType & 0x1f);
         return data![1]
     }
     

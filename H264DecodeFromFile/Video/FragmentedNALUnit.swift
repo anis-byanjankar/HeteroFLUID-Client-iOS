@@ -10,7 +10,8 @@ import Foundation
 import AVFoundation
 
 struct FragmentedNALU: NALUnit {    
-    
+    let DEBUG: Bool = true;
+    let TAG: String = "FragmentedNALU"
     var type: NALUType = NALUType.FU
     var fragments: [NALUFragment]
     var timestamp: CMTime
@@ -21,52 +22,78 @@ struct FragmentedNALU: NALUnit {
     }
     
     var data: Data? {
-        
+        if DEBUG{
+            print("\(TAG)\n")
+            print("\(TAG) *************************")
+            for x in fragments{
+                print("\(TAG) Sequence Number : \(x.sequenceNumber)")
+            }
+            print("\(TAG) *************************")
+        }
         var lastFragmentSequence: UInt16? = nil
+        var falseFlag: Bool = false;
         
         // According to RFC 7798, the reconstructed NAL unit
         // should only contain contiguous fragments (i.e. in case
         // the n-th fragment is lost, the resulting NAL unit should
         // only contain the first n-1 fragments)
-        let sortedFragments = fragments.sorted(by: { (a, b) -> Bool in
+        var sortedFragments = fragments.sorted(by: { (a, b) -> Bool in
             let seqA: UInt16 = a.sequenceNumber
             let seqB: UInt16 = b.sequenceNumber
             return seqA <= seqB
         })
-            .filter({ (a) -> Bool in
-                // TODO: handle sequence reset
-                let included = (lastFragmentSequence == nil || lastFragmentSequence == a.sequenceNumber-1)
-                lastFragmentSequence = a.sequenceNumber
-                return included
-            })
+        sortedFragments = sortedFragments.filter({ (a) -> Bool in
+            // TODO: handle sequence reset
+            //Remove all packets after one missing packet.
+            if falseFlag == true{
+                return false
+            }
+            
+            let included = (lastFragmentSequence == nil || lastFragmentSequence == a.sequenceNumber-1)
+            lastFragmentSequence = a.sequenceNumber
+            
+            if included == false{
+                falseFlag = true;
+            }
+            return included
+        })
         
         if sortedFragments.count == 0{
-            print("Error:223 - No Fragments !!!")
+            print("\(TAG) Error:223 - No Fragments !!!")
             return nil
         }
         
         if let data = sortedFragments.first?.isStartUnit, !data {
-            print("Skipping NALU due to missing starting fragment")
+            print("\(TAG) Skipping NALU due to missing starting fragment")
             return nil
         }
         
-        var naluHeader = Data(sortedFragments.first!.naluHeader)
+        let naluHeader = Data(sortedFragments.first!.naluHeader)
         
         // If some fragments were omitted, the forbidden zero
         // bit of the reconstructed NALU must be set to 1 to indicate
         // to the decoder that some data is missing. Fortunately,
         // the bit has the same position for both H.264/AVC and HEVC
         if sortedFragments.count != fragments.count {
-            naluHeader[0] = naluHeader[0] | 0x80
-            print("Setting forbidden zero bit to one because \(fragments.count - sortedFragments.count) packets are missing")
+            //            naluHeader[0] = naluHeader[0] | 0x80
+            //            print("Setting forbidden zero bit to one because \(fragments.count - sortedFragments.count) packets are missing")
+            print("\(TAG) Dropping \(fragments.count - sortedFragments.count) packets for not having sequential packets.")
         }
         
-        return sortedFragments
-            .reduce(naluHeader) { (accumulator: Data, element: NALUFragment) -> Data in
-                var data = accumulator
-                data.append(element.payload)
-                return data
+        
+        //Acculumate the fragments before sending it.
+        var sendData: Data = Data(naluHeader);
+        for x in sortedFragments{
+            sendData.append(x.payload)
         }
+        
+        return sendData
+        //        return sortedFragments
+        //            .reduce(naluHeader) { (accumulator: Data, element: NALUFragment) -> Data in
+        //                var data = accumulator
+        //                data.append(element.payload)
+        //                return data
+        //        }
     }
     
     var isForbiddenZeroBitSet: Bool {

@@ -12,7 +12,7 @@ import AVFoundation
 
 
 class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
-    
+    let DEBUG: Bool! = false;
     
     
     var formatDesc: CMVideoFormatDescription?
@@ -34,23 +34,69 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        //configDecoding()
-        //        SendClientDimension()
-        //        testUDPServer()
         
+        //Send Static SPS AND PPS
+                var SPS: [UInt8] = [0, 0, 0, 1, // header
+                0x67, 0x42, 0x80, 0x0a, 0xda,
+                0x01, 0x68, 0x05, 0x27, 0xe6,
+                0x80, 0x6d, 0x0a, 0x13, 0x50]
+                var PPS: [UInt8] = [0, 0, 0, 1, // header
+                0x68, 0xce, 0x06, 0xf2]
         
-        //Getting Data from the Client
-//        SendClientDimension()
-//        rtpParser = RTPParser();
-//        rtpParser?.delegate = self
-//        _ = try! UDPServer(port: 9876,parser: rtpParser!)//HardCoded in the AOSP ARTPWriter
-//
-//
-//
-//        defragmenter = AVCDefragmenter()
-//        defragmenter?.delegate = self
+                
+        DispatchQueue.global(qos: .userInteractive).async {
+            self.SendClientDimension()//Send the dimension of device to android.
+        }
+
+        // Getting Data from the Client
+        rtpParser = RTPParser();
+        rtpParser?.delegate = self
+        _ = try! UDPServer(port: 9876,parser: rtpParser!)//HardCoded in the AOSP ARTPWriter
+        sleep(1)
+
+        defragmenter = AVCDefragmenter()
+        defragmenter?.delegate = self
         
-        configDecoding(fromFile: true)
+        configDecoding(fromFile: false)
+        
+        //******************************TESTING*********************************
+        //testUDPServer()
+        //testSeparatePacket()
+//              fxnA() // Dispatch Thread testing.
+        
+//        sleep(2)
+//        self.receivedRawVideoFrame(&SPS)
+//        self.receivedRawVideoFrame(&PPS)
+        
+    }
+    
+    //Pass by reference checking.
+    func fxnA(){
+        var a: UInt8! = 0x87
+        var b: UInt8! = 0x80
+        DispatchQueue.global(qos: .userInteractive).async {
+            sleep(3)
+            self.fxnB(&a)
+        }
+        
+        DispatchQueue.global(qos: .userInteractive).async {
+                   sleep(1)
+            self.fxnB(&b)
+               }
+    }
+    
+    func fxnB(_ data: inout UInt8){
+        for _ in 1...50{
+            print(data)
+            sleep(1)
+        }
+    }
+    //Pass by reference Checking end.
+    func testSeparatePacket(){
+        var dummy: [UInt8] = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFA,0x1B]
+        var dummy2: [UInt8] = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFA,0x1B]
+        self.rtpParser?.separatePackets(&dummy);
+        self.rtpParser?.separatePackets(&dummy2);
         
     }
     
@@ -67,7 +113,6 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //        }
     }
     func SendClientDimension(){
-        DispatchQueue.global(qos: .userInteractive).async {
             let x = TCPClient(host: "192.168.0.7",port: 5001)
             //            let screenSize     = UIScreen.main.bounds
             //            if x.Send(data: Data("display:\(screenSize.width).\(screenSize.width).640\n".utf8)){
@@ -77,7 +122,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             else{
                 print("TCP Data Sent!!!")
             }
-        }
+        
     }
     func testTCPClient(){
         let x = TCPClient(host: "localhost",port: 2399)
@@ -89,30 +134,85 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     }
     //Here we receive the concatenated NAL Units
     func didReceiveNALUnit(_ nalu: NALUnit) {
-//        print("NAL UNITS RECEIVED!!!!")
-//        nalu.data?.hex()
+        //        print("NAL UNITS RECEIVED!!!!")
+        //        nalu.data?.hex()
+        //3. Reveibed NAL UNIT now we need to send this NAL Unit to decoder.
+        // Expectation : NAL Units are separated with 0x00 00 00 01. All SPS, PPS and IDR, VCL Frame. Everything must be separated
         
-        var pck: VideoPacket = [UInt8] (nalu.data!)
+//        nalu.data!.hex()
+        var rawPayload: VideoPacket = [UInt8] (nalu.data!)
+        // We need to separate the packets and also add sentinel at the front of each packet.
         
-        self.receivedRawVideoFrame(&pck)    //This is where we revceive the packet and process it. Here we have to receive the packet.
-
+        //TODO: Get the data and parse it into the normal format.
+        //Input:    xxxxxMxxxxxxxMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //Output:
+        //      Mxxxxx
+        //      Mxxxxxxx
+        //      Mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        let startCode: [UInt8] = [0,0,0,1]
+        
+        //find second start code,NO StartCode: STRIPPED FROM AOSP , so startIndex = 0
+        var first = true
+        var startIndex = 1
+        
+        while ((startIndex + 3) < rawPayload.count) {
+            if Array(rawPayload[startIndex...startIndex+3]) == startCode {
+                
+                var packetSend = Array(rawPayload[0..<startIndex])
+                rawPayload.removeSubrange(0..<startIndex)
+                if first == true{
+                    packetSend = [UInt8] ([0,0,0,1]) + packetSend
+                    first = false
+                }
+                
+                //Update the payload and send the RTP packet
+                var tmpNALUPacket = packetSend
+                DispatchQueue.global(qos: .userInteractive).sync {
+                    self.receivedRawVideoFrame(&tmpNALUPacket)
+                }
+                
+                if DEBUG{
+                    Data(packetSend).hex()
+                }
+                startIndex = 1
+            }
+            startIndex += 1
+        }
+        
+        //Only one Fragmented Packet.
+        if first == true{
+            rawPayload = [UInt8] ([0,0,0,1]) + rawPayload
+        }
+        
+        
+        //Update the payload and send the RTP packet in RTP.payload
+        DispatchQueue.global(qos: .userInteractive).sync {
+            self.receivedRawVideoFrame(&rawPayload)
+        }
+        if DEBUG{
+            Data(rawPayload).hex()
+        }
+        
+        
+        
+//        self.receivedRawVideoFrame(&pck)    //This is where we revceive the packet and process it. Here we have to receive the packet.
+        
         
     }
     
     
     //Here we receive the RTP Packets from the RTPParser. We need to pass this to the Video Defragmenter
     func didReceiveRTPPacket(packet: RTPPacket) {
-        //        print("RTP Packet Revceived")
         guard packet.payload.count > 0 else {
             print("Received packet with empty payload")
             return
         }
-                DispatchQueue.global(qos: .userInteractive).async {
-//        self.defragmenter?.didReceiveRTPPacket(packet.payload, timestamp: CMTimeMake(value: Int64(packet.timestamp), timescale: 90000), sequenceNumber: packet.sequence)
-                    self.defragmenter?.didReceiveRTPPacket(rtpPacket: packet)
-                    
-                }
+        //packet.payload.hex()
+        //1. Got Data and parsed datagram packet into RTP packet. Now this is send to Defragmnenter.
+        self.defragmenter?.didReceiveRTPPacket(rtpPacket: packet)
+        
     }
+    
     
     
     func configDecoding(fromFile: Bool){
@@ -142,12 +242,12 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         //Comment 2: Read the NALUnits from File and decode the VIDEO.
         if fromFile == true{
-        DispatchQueue.global().async {
-            let filePath = Bundle.main.path(forResource: self.source!, ofType: "h264")
-            let url = URL(fileURLWithPath: filePath!)
-            self.decodeFile(url)
+            DispatchQueue.global().async {
+                let filePath = Bundle.main.path(forResource: self.source!, ofType: "h264")
+                let url = URL(fileURLWithPath: filePath!)
+                self.decodeFile(url)
+            }
         }
-    }
     }
     
     func decodeFile(_ fileURL: URL) {
@@ -163,18 +263,18 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     
     func receivedRawVideoFrame(_ videoPacket: inout VideoPacket) {
         
+//        _ = Data(videoPacket).hex()
         //Comment 4: Replace start code with nal size for iOS.
         var biglen = CFSwapInt32HostToBig(UInt32(videoPacket.count - 4))
         memcpy(&videoPacket, &biglen, 4)
         
         let nalType = videoPacket[4] & 0x1F
         
-        print("Code:113 - Read Nalu size \(videoPacket.count)");
+        print("Code:112 - Read Nalu size \(videoPacket.count)");
         
         switch nalType {
         case 0x05:
             print("Code:112 - Nal type is IDR frame")
-            Data(videoPacket).hex()
             if createDecompSession() {
                 decodeVideoPacket(videoPacket)
             }
@@ -183,15 +283,15 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             spsSize = videoPacket.count - 4
             sps = Array(videoPacket[4..<videoPacket.count])
             
-            Data(videoPacket).hex()
-            Data(sps!).hex()
+            //            _ = Data(videoPacket).hex()
+        //            _ = Data(sps!).hex()
         case 0x08:
             print("Code:112 - Nal type is PPS")
             ppsSize = videoPacket.count - 4
             pps = Array(videoPacket[4..<videoPacket.count])
-        
-            Data(videoPacket).hex()
-            Data(pps!).hex()
+            
+            //            _ = Data(videoPacket).hex()
+        //            _ = Data(pps!).hex()
         default:
             print("Code:112 - Nal type is B/P frame")
             
@@ -199,6 +299,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             break;
             
         }
+        print("\n")
         
     }
     
@@ -253,7 +354,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                                                        flags: [._EnableAsynchronousDecompression],
                                                        frameRefcon: &outputBuffer, infoFlagsOut: &flagOut)
             if status == noErr {
-                print("OK")
+                print("VideoSession: OK!!!")
             }else if(status == kVTInvalidSessionErr) {
                 print("IOS8VT: Invalid session, reset decoder session");
             } else if(status == kVTVideoDecoderBadDataErr) {
@@ -332,5 +433,15 @@ private func decompressionSessionDecodeFrameCallback(_ decompressionOutputRefCon
     if status == noErr {
         // do something with your resulting CVImageBufferRef that is your decompressed frame
         streamManager.displayDecodedFrame(imageBuffer);
+    }
+    else{
+        if status == kVTVideoDecoderBadDataErr{
+            print("Error: \(status) -> kVTVideoDecoderBadDataErr")
+        }
+        else{
+            print("ERROR in decoding Data!!- Error Code: \(status)")
+            //https://stackoverflow.com/questions/29525000/how-to-use-videotoolbox-to-decompress-h-264-video-stream
+        }
+        
     }
 }

@@ -9,11 +9,17 @@
 import Foundation
 
 class RTPParser: TransportDelegate {
+    let DEBUG: Bool = true
+    let TAG: String = "RTPParser: "
     
     private var receivedPackets: UInt = 0
-    private var lostPackets: UInt = 0
+    private var lostPackets: UInt = 0 
     
     var delegate: RTPPacketDelegate? = nil
+    
+    let QUEUE_CAPACITY = 50
+    var expectedRTPPacketSequence: UInt16? = nil
+    var rtpPacketOrderQueue: [RTPPacket] = []
     
     func datagramReceived (_ data: [UInt8]) {
         
@@ -49,15 +55,19 @@ class RTPParser: TransportDelegate {
         
         let payload = Data(data[headerLength...])
         
+        
+        /* Debug Start*/
+        //        if headerLength>12{//Check if there is extension for the header.
+        //            hex(data: data)
+        //        }
+        /* Debug End*/
+        
         let packet = RTPPacket(payload: payload, sequence: sequence, ssrc: ssrc, csrc: csrc, timestamp: timestamp, extensions: extensions)
-        
+       
         ReceiveRTPPacket(packet)
-        
     }
     
-    let QUEUE_CAPACITY = 10
-    var expectedRTPPacketSequence: UInt16? = nil
-    var rtpPacketOrderQueue: [RTPPacket] = []
+    
     
     // Decides whether a packet should be dispatched to the delegate
     // right away or appended to the queue
@@ -67,25 +77,32 @@ class RTPParser: TransportDelegate {
         
         // First packet ever received, do not inspect sequence number
         guard expectedRTPPacketSequence != nil else {
-            dispatchPacket(packet)
+            dispatchPacket(packet: packet)
             return
         }
         
         // Packets that arrive after a packet with higher
         // sequence number are dropped
         if packet.sequence < expectedRTPPacketSequence! && expectedRTPPacketSequence! < UInt16.max - UInt16(QUEUE_CAPACITY) && packet.sequence <= QUEUE_CAPACITY {
-            print("Dropping out-of-order packet (expected \(expectedRTPPacketSequence!) got \(packet.sequence))")
+            print("\(TAG) Dropping out-of-order packet (expected \(expectedRTPPacketSequence!) got \(packet.sequence))")
             return
         }
         
         // Next packet in sequence arrived,
         // flush the queue
         if expectedRTPPacketSequence == packet.sequence {
-            dispatchPacket(packet)
+            if DEBUG{
+            print("\(TAG) 1Expected Packet!!")
+                
+            }
+            dispatchPacket(packet: packet)
+            
             return
         }
         else {
-            print("Expected packet didn't arrive")
+            if DEBUG{
+                print("\(TAG) Expected packet didn't arrive: Expected Packet- \(String(describing: expectedRTPPacketSequence))! Packet Seq - \(packet.sequence) ")
+            }
         }
         
         // Push to queue
@@ -99,7 +116,7 @@ class RTPParser: TransportDelegate {
         if rtpPacketOrderQueue.first!.sequence == expectedRTPPacketSequence || rtpPacketOrderQueue.count >= QUEUE_CAPACITY {
             
             repeat {
-                dispatchPacket(rtpPacketOrderQueue.removeFirst())
+                dispatchPacket(packet: rtpPacketOrderQueue.removeFirst())
             }
                 while (rtpPacketOrderQueue.first?.sequence == expectedRTPPacketSequence || rtpPacketOrderQueue.count >= QUEUE_CAPACITY)
             
@@ -121,12 +138,134 @@ class RTPParser: TransportDelegate {
     }
     
     // Dispatches the packet to the delegate
-    func dispatchPacket (_ packet: RTPPacket) {
+    func dispatchPacket (packet: RTPPacket) {
         expectedRTPPacketSequence = UInt16((Int(packet.sequence) + 1) % 65535)
-//        print(packet)
-        DispatchQueue.global(qos: .userInteractive).async {
-            self.delegate?.didReceiveRTPPacket(packet: packet)//Calls didReceiveRTPPacket in ViewController.swift. -> Line 71 at ViewController Class/=.
+        //        print(packet)
+        print("\(TAG) Sequence Number UDP: \(packet.sequence)")
+        //        print(packet.timestamp)
+        //        packet.payload.hex()
+        
+        DispatchQueue.global(qos: .userInteractive).sync {
+            self.delegate?.didReceiveRTPPacket(packet: packet)
         }
+        
+        
+        
+        
+        //PAYLOAD PROCEDDING START FOR SPS|PPS|IDR
+        
+        //        var tmpPacket = packet
+        //        tmpPacket.STAP = true; // To recognige that the packet is first packet with SPS,PPS and IDR
+        //        var rawPayload = [UInt8] (packet.payload)
+        //
+        //        //TODO: Get the data and parse it into the normal format.
+        //        //Input:    xxxxxMxxxxxxxMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //        //Output:
+        //        //      Mxxxxx
+        //        //      Mxxxxxxx
+        //        //      Mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //        let startCode: [UInt8] = [0,0,0,1]
+        //
+        //        //find second start code,NO StartCode: STRIPPED FROM AOSP , so startIndex = 0
+        //        var first = true
+        //        var startIndex = 1
+        //
+        //        while ((startIndex + 3) < rawPayload.count) {
+        //            if Array(rawPayload[startIndex...startIndex+3]) == startCode {
+        //
+        //                var packetSend = Array(rawPayload[0..<startIndex])
+        //                rawPayload.removeSubrange(0..<startIndex)
+        //                if first == true{
+        //                    packetSend = [UInt8] ([0,0,0,1]) + packetSend
+        //                    first = false
+        //                }
+        //
+        //                //Update the payload and send the RTP packet
+        //                tmpPacket.payload = Data(packetSend)
+        //                DispatchQueue.global(qos: .userInteractive).async {
+        //                    self.delegate?.didReceiveRTPPacket(packet: tmpPacket)
+        //                }
+        //
+        //                if DEBUG{
+        //                    print(TAG)
+        //                    Data(packetSend).hex()
+        //                }
+        //                startIndex = 1
+        //
+        //            }
+        //            startIndex += 1
+        //        }
+        //
+        //        //Only one Fragmented Packet.
+        //        if first == true{
+        //            tmpPacket.STAP = false
+        //            rawPayload = [UInt8] ([0,0,0,1]) + rawPayload
+        //            first = false
+        //        }
+        //
+        //
+        //        //Update the payload and send the RTP packet in RTP.payload
+        //        tmpPacket.payload = Data(rawPayload)
+        //        DispatchQueue.global(qos: .userInteractive).async {
+        //            self.delegate?.didReceiveRTPPacket(packet: tmpPacket)
+        //        }
+        //        if DEBUG{
+        //            print(TAG)
+        //            Data(rawPayload).hex()
+        //        }
+        
+        //PAYLOAD PROCEDDING END FOR SPS|PPS|IDR
     }
+    
+    
+    //Not used function. Used for testing.
+    func separatePackets(_ videoPacket: inout [UInt8]){
+        //********************************************************************************
+        //TODO:     Get the data and parse it into the normal format.
+        //Input:    xxxxxMxxxxxxxMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //Output:
+        //          Mxxxxx
+        //          Mxxxxxxx
+        //          Mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //********************************************************************************
+        
+        //********************************************************************************
+        //Static Test for Adding 0x00 0x00 0x00 0x01 padding
+        //********************************************************************************
+        //var dummy: [UInt8] = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFA,0x1B]
+        //self.separatePackets(&dummy);
+        //********************************************************************************
+        
+        let startCode: [UInt8] = [0,0,0,1]
+        
+        //find second start code,NO StartCode: STRIPPED FROM AOSP , so startIndex = 0
+        var first = true
+        var startIndex = 1
+        
+        while ((startIndex + 3) < videoPacket.count) {
+            if Array(videoPacket[startIndex...startIndex+3]) == startCode {
+                
+                var packet = Array(videoPacket[0..<startIndex])
+                videoPacket.removeSubrange(0..<startIndex)
+                if first == true{
+                    packet = [UInt8] ([0,0,0,1]) + packet
+                    first = false
+                }
+                
+                Data(packet).hex()
+                
+                startIndex = 1
+                
+            }
+            startIndex += 1
+        }
+        if first == true{
+            videoPacket = [UInt8] ([0,0,0,1]) + videoPacket
+            first = false
+        }
+        
+        Data(videoPacket).hex()
+    }
+    
     
 }
