@@ -8,10 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		B619A4B09A468F4954CF9726 /* Pods_H264DecodeFromFile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B8F7474393637F402F2C94CB /* Pods_H264DecodeFromFile.framework */; };
-		F81A86B42463D89C00E7CDBC /* TCPClientVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81A86B32463D89C00E7CDBC /* TCPClientVideo.swift */; };
 		F81A86DD2464FC7800E7CDBC /* TCPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81A86DC2464FC7800E7CDBC /* TCPClient.swift */; };
 		F81A86DF246501E100E7CDBC /* TCPRTPParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81A86DE246501E100E7CDBC /* TCPRTPParser.swift */; };
-		F81A86E12465335300E7CDBC /* TCPStreamProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81A86E02465335300E7CDBC /* TCPStreamProcessor.swift */; };
 		F853AED42452CCEE0037DDED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F853AED32452CCEE0037DDED /* AppDelegate.swift */; };
 		F853AED62452CCEE0037DDED /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F853AED52452CCEE0037DDED /* SceneDelegate.swift */; };
 		F853AED82452CCEE0037DDED /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F853AED72452CCEE0037DDED /* ViewController.swift */; };
@@ -22,7 +20,6 @@
 		F853AEEA2452CE150037DDED /* mtv.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEE92452CE150037DDED /* mtv.h264 */; };
 		F853AEEF2452CE440037DDED /* H264.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEEC2452CE430037DDED /* H264.h264 */; };
 		F853AEF02452CE440037DDED /* nature.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEED2452CE440037DDED /* nature.h264 */; };
-		F8C1A8F724568B6F00EA9564 /* TCPClientBCK.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8F624568B6F00EA9564 /* TCPClientBCK.swift */; };
 		F8C1A8F924568B8200EA9564 /* UDPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8F824568B8200EA9564 /* UDPServer.swift */; };
 		F8C1A8FB24568B9600EA9564 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8FA24568B9600EA9564 /* Connection.swift */; };
 		F8C1A9012457DA5400EA9564 /* RTPParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A9002457DA5400EA9564 /* RTPParser.swift */; };
@@ -45,10 +42,8 @@
 		36C976C2DED4C895C6C72B68 /* Pods-H264DecodeFromFile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-H264DecodeFromFile.debug.xcconfig"; path = "Target Support Files/Pods-H264DecodeFromFile/Pods-H264DecodeFromFile.debug.xcconfig"; sourceTree = "<group>"; };
 		AE4491FEFC9055749413AFA7 /* Pods-H264DecodeFromFile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-H264DecodeFromFile.release.xcconfig"; path = "Target Support Files/Pods-H264DecodeFromFile/Pods-H264DecodeFromFile.release.xcconfig"; sourceTree = "<group>"; };
 		B8F7474393637F402F2C94CB /* Pods_H264DecodeFromFile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_H264DecodeFromFile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		F81A86B32463D89C00E7CDBC /* TCPClientVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPClientVideo.swift; sourceTree = "<group>"; };
 		F81A86DC2464FC7800E7CDBC /* TCPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCPClient.swift; sourceTree = "<group>"; };
 		F81A86DE246501E100E7CDBC /* TCPRTPParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPRTPParser.swift; sourceTree = "<group>"; };
-		F81A86E02465335300E7CDBC /* TCPStreamProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPStreamProcessor.swift; sourceTree = "<group>"; };
 		F853AED02452CCEE0037DDED /* H264DecodeFromFile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = H264DecodeFromFile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F853AED32452CCEE0037DDED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F853AED52452CCEE0037DDED /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,7 +56,6 @@
 		F853AEE92452CE150037DDED /* mtv.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = mtv.h264; sourceTree = "<group>"; };
 		F853AEEC2452CE430037DDED /* H264.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = H264.h264; sourceTree = "<group>"; };
 		F853AEED2452CE440037DDED /* nature.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = nature.h264; sourceTree = "<group>"; };
-		F8C1A8F624568B6F00EA9564 /* TCPClientBCK.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPClientBCK.swift; sourceTree = "<group>"; };
 		F8C1A8F824568B8200EA9564 /* UDPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPServer.swift; sourceTree = "<group>"; };
 		F8C1A8FA24568B9600EA9564 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		F8C1A9002457DA5400EA9564 /* RTPParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTPParser.swift; sourceTree = "<group>"; };
@@ -154,10 +148,7 @@
 		F8C1A8F524568B3B00EA9564 /* Network */ = {
 			isa = PBXGroup;
 			children = (
-				F8C1A8F624568B6F00EA9564 /* TCPClientBCK.swift */,
-				F81A86E02465335300E7CDBC /* TCPStreamProcessor.swift */,
 				F81A86DC2464FC7800E7CDBC /* TCPClient.swift */,
-				F81A86B32463D89C00E7CDBC /* TCPClientVideo.swift */,
 				F8C1A8F824568B8200EA9564 /* UDPServer.swift */,
 				F8C1A8FA24568B9600EA9564 /* Connection.swift */,
 				F8C1A9212458003F00EA9564 /* Server.swift */,
@@ -358,12 +349,9 @@
 				F8C1A92C24580A9200EA9564 /* AVCNALUFragment.swift in Sources */,
 				F8C1A9052457F40000EA9564 /* RTPPacket.swift in Sources */,
 				F853AED82452CCEE0037DDED /* ViewController.swift in Sources */,
-				F8C1A8F724568B6F00EA9564 /* TCPClientBCK.swift in Sources */,
 				F8C1A90D2457FB1400EA9564 /* RTPPacketDelegate.swift in Sources */,
 				F8C1A90B2457F82500EA9564 /* HexPrinter.swift in Sources */,
 				F8C1A9032457DA9900EA9564 /* TransportDelegate.swift in Sources */,
-				F81A86B42463D89C00E7CDBC /* TCPClientVideo.swift in Sources */,
-				F81A86E12465335300E7CDBC /* TCPStreamProcessor.swift in Sources */,
 				F853AED42452CCEE0037DDED /* AppDelegate.swift in Sources */,
 				F8C1A9222458003F00EA9564 /* Server.swift in Sources */,
 				F8C1A92F24580A9200EA9564 /* FragmentedNALUnit.swift in Sources */,
