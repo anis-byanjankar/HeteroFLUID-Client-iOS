@@ -11,12 +11,10 @@ class TCPClient {
     var connected: Bool = false
     var delegate: TransportDelegate?
     
-    
     init(host: String, port: UInt16, delegate: TransportDelegate?) {
         self.host = NWEndpoint.Host(host)
         self.port = NWEndpoint.Port(rawValue: port)!
         self.delegate = nil
-        
         self.start()
         
         
@@ -53,9 +51,6 @@ class TCPClient {
     
     
     //Connection
-    
-    
-    
     private func setupReceive() {
         self.nwConnection?.receive(minimumIncompleteLength: 1, maximumLength: 65536) { (data, _, isComplete, error) in
             if let data = data, !data.isEmpty {
@@ -71,26 +66,6 @@ class TCPClient {
             }
         }
     }
-    
-    
-//    func processStream(){
-//        //        while true{
-//        //            self.receivedDataHandlerQueue.sync {
-//        if self.receivedPacket!.count>14{
-//            let headerChunk = [UInt8] (self.receivedPacket![0...13])
-//            let dataLength = ByteUtil.bytesToUInt16(headerChunk[12...13])
-//
-//            let rtpPacketRaw = self.receivedPacket![0...dataLength-1]
-//            self.receivedPacket = self.receivedPacket![dataLength...]
-//            self.receivedPacket!.hex()
-//            rtpPacketRaw.hex()
-//        }
-//
-//        //            }
-//        //        }
-//    }
-    
-    
     func send(data: Data) -> Bool{
         self.nwConnection?.send(content: data, completion: .contentProcessed( { error in
             if let error = error {
@@ -116,19 +91,13 @@ class TCPClient {
         print("connection did end")
         self.stop(error: nil)
     }
-    
+
     private func stop(error: Error?) {
         self.nwConnection?.stateUpdateHandler = nil
         self.nwConnection?.cancel()
         didStopCallback(error: error)
-        
     }
     func didStopCallback(error: Error?) {
-        
         print("\(String(describing: error))")
-        
-        //            print(error)
-        //            exit(EXIT_FAILURE)
-        
     }
 }

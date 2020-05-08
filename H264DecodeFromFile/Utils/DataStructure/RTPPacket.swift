@@ -9,7 +9,7 @@
 import Foundation
 
 // Represents a single RTP packet
-struct RTPPacket {    
+struct RTPPacket {
     // The raw payload of the video packet bearing
     // stream data
     var payload: Data
