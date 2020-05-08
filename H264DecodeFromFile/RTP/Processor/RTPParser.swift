@@ -11,7 +11,7 @@ import Foundation
 class RTPParser: TransportDelegate {
     let DEBUG: Bool = true
     let TAG: String = "RTPParser: "
-    
+    var mode: String = "UDP"
     private var receivedPackets: UInt = 0
     private var lostPackets: UInt = 0 
     
@@ -63,7 +63,7 @@ class RTPParser: TransportDelegate {
         /* Debug End*/
         
         let packet = RTPPacket(payload: payload, sequence: sequence, ssrc: ssrc, csrc: csrc, timestamp: timestamp, extensions: extensions)
-       
+        
         ReceiveRTPPacket(packet)
     }
     
@@ -92,7 +92,7 @@ class RTPParser: TransportDelegate {
         // flush the queue
         if expectedRTPPacketSequence == packet.sequence {
             if DEBUG{
-            print("\(TAG) 1Expected Packet!!")
+                print("\(TAG) 1Expected Packet!!")
                 
             }
             dispatchPacket(packet: packet)
@@ -139,82 +139,15 @@ class RTPParser: TransportDelegate {
     
     // Dispatches the packet to the delegate
     func dispatchPacket (packet: RTPPacket) {
-        expectedRTPPacketSequence = UInt16((Int(packet.sequence) + 1) % 65535)
-        //        print(packet)
+        if mode == "UDP"{
+            expectedRTPPacketSequence = UInt16((Int(packet.sequence) + 1) % 65535)
+        }
         print("\(TAG) Sequence Number UDP: \(packet.sequence)")
-        //        print(packet.timestamp)
-        //        packet.payload.hex()
+      
         
         DispatchQueue.global(qos: .userInteractive).sync {
             self.delegate?.didReceiveRTPPacket(packet: packet)
         }
-        
-        
-        
-        
-        //PAYLOAD PROCEDDING START FOR SPS|PPS|IDR
-        
-        //        var tmpPacket = packet
-        //        tmpPacket.STAP = true; // To recognige that the packet is first packet with SPS,PPS and IDR
-        //        var rawPayload = [UInt8] (packet.payload)
-        //
-        //        //TODO: Get the data and parse it into the normal format.
-        //        //Input:    xxxxxMxxxxxxxMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        //        //Output:
-        //        //      Mxxxxx
-        //        //      Mxxxxxxx
-        //        //      Mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        //        let startCode: [UInt8] = [0,0,0,1]
-        //
-        //        //find second start code,NO StartCode: STRIPPED FROM AOSP , so startIndex = 0
-        //        var first = true
-        //        var startIndex = 1
-        //
-        //        while ((startIndex + 3) < rawPayload.count) {
-        //            if Array(rawPayload[startIndex...startIndex+3]) == startCode {
-        //
-        //                var packetSend = Array(rawPayload[0..<startIndex])
-        //                rawPayload.removeSubrange(0..<startIndex)
-        //                if first == true{
-        //                    packetSend = [UInt8] ([0,0,0,1]) + packetSend
-        //                    first = false
-        //                }
-        //
-        //                //Update the payload and send the RTP packet
-        //                tmpPacket.payload = Data(packetSend)
-        //                DispatchQueue.global(qos: .userInteractive).async {
-        //                    self.delegate?.didReceiveRTPPacket(packet: tmpPacket)
-        //                }
-        //
-        //                if DEBUG{
-        //                    print(TAG)
-        //                    Data(packetSend).hex()
-        //                }
-        //                startIndex = 1
-        //
-        //            }
-        //            startIndex += 1
-        //        }
-        //
-        //        //Only one Fragmented Packet.
-        //        if first == true{
-        //            tmpPacket.STAP = false
-        //            rawPayload = [UInt8] ([0,0,0,1]) + rawPayload
-        //            first = false
-        //        }
-        //
-        //
-        //        //Update the payload and send the RTP packet in RTP.payload
-        //        tmpPacket.payload = Data(rawPayload)
-        //        DispatchQueue.global(qos: .userInteractive).async {
-        //            self.delegate?.didReceiveRTPPacket(packet: tmpPacket)
-        //        }
-        //        if DEBUG{
-        //            print(TAG)
-        //            Data(rawPayload).hex()
-        //        }
-        
-        //PAYLOAD PROCEDDING END FOR SPS|PPS|IDR
     }
     
     

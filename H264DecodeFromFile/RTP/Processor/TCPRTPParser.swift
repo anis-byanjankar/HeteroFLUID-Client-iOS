@@ -12,26 +12,25 @@ class TCPRTPParser: RTPParser {
     let receivedDataHandlerQueue = DispatchQueue(label: "TCP Data Handler",qos: .userInteractive)
     let stremeProcessor = DispatchQueue(label: "TCP Stream Processor",qos: .userInteractive)
     
-    var started: Bool = false
-    
     override func datagramReceived (_ data: [UInt8]) {
         if self.streamBuffer == nil{
             self.streamBuffer = data
+            self.mode = "TCP"
         }
         else{
             self.streamBuffer = self.streamBuffer! + data
         }
         let length = ByteUtil.bytesToUInt16(self.streamBuffer![12...13])
-        
+        if DEBUG {
+            let sequence = ByteUtil.bytesToUInt16(data[2...3])
+            print("Sequence:113: \(sequence) Next first byte: \(self.streamBuffer![0])")
+        }
         if self.streamBuffer!.count > length && self.streamBuffer![0] == 0x80{
             var packet = [UInt8] (self.streamBuffer![0..<Int(length)])
-
+            
             self.streamBuffer!.removeSubrange(0..<Int(length))
             
-            if DEBUG {
-                let sequence = ByteUtil.bytesToUInt16(data[2...3])
-                print("Sequence:113: \(sequence) Next first byte: \(self.streamBuffer![0])")
-            }
+            
             self.stremeProcessor.async {
                 self.processStream(&packet)
             }
@@ -47,10 +46,9 @@ class TCPRTPParser: RTPParser {
         
         // Synchronization source (SSRC)
         let ssrc = ByteUtil.bytesToUInt32(data[8...11])
-        
-        print("Sequence Number:112: : \(sequence)")
-        //        print(data.count)
-        //        Data(data).hex()
+        if DEBUG{
+            print("Sequence Number:112: : \(sequence)")
+        }
         
         let payload = Data(data[14...])
         
