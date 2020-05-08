@@ -30,30 +30,59 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     
     
     var source: String? = "H264"
+    var AOSPServer: String = "192.168.0.7"
+    var port: UInt16 = 9879
+    
+    var client: TCPClient? = nil
+    
+    let mode: String = "TCP"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
         //Send Static SPS AND PPS
-                var SPS: [UInt8] = [0, 0, 0, 1, // header
-                0x67, 0x42, 0x80, 0x0a, 0xda,
-                0x01, 0x68, 0x05, 0x27, 0xe6,
-                0x80, 0x6d, 0x0a, 0x13, 0x50]
-                var PPS: [UInt8] = [0, 0, 0, 1, // header
-                0x68, 0xce, 0x06, 0xf2]
+        //                var SPS: [UInt8] = [0, 0, 0, 1, // header
+        //                0x67, 0x42, 0x80, 0x0a, 0xda,
+        //                0x01, 0x68, 0x05, 0x27, 0xe6,
+        //                0x80, 0x6d, 0x0a, 0x13, 0x50]
+        //                var PPS: [UInt8] = [0, 0, 0, 1, // header
+        //                0x68, 0xce, 0x06, 0xf2]
         
-                
+        // 1. Fix the RTP Parser
+        switch self.mode{
+        case "UDP":
+            self.rtpParser = RTPParser();
+        case "TCP":
+            self.rtpParser = TCPRTPParser();
+        default:
+            self.rtpParser = RTPParser();
+            break
+        }
+        
         DispatchQueue.global(qos: .userInteractive).async {
             self.SendClientDimension()//Send the dimension of device to android.
+            
+            
+            
+            
+            self.client = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
+            sleep(2)
+            
+            while self.client?.connected == false{
+                self.client?.stop()
+                self.client = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
+                sleep(2)
+                self.client?.delegate = self.rtpParser
+                
+            }
         }
-
-        // Getting Data from the Client
-        rtpParser = RTPParser();
+        
+        
         rtpParser?.delegate = self
-        _ = try! UDPServer(port: 9876,parser: rtpParser!)//HardCoded in the AOSP ARTPWriter
-        sleep(1)
-
+        //        _ = try! UDPServer(port: 9876,parser: rtpParser!)//HardCoded in the AOSP ARTPWriter
+        //        sleep(1)
+        
         defragmenter = AVCDefragmenter()
         defragmenter?.delegate = self
         
@@ -62,11 +91,11 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //******************************TESTING*********************************
         //testUDPServer()
         //testSeparatePacket()
-//              fxnA() // Dispatch Thread testing.
+        //              fxnA() // Dispatch Thread testing.
         
-//        sleep(2)
-//        self.receivedRawVideoFrame(&SPS)
-//        self.receivedRawVideoFrame(&PPS)
+        //        sleep(2)
+        //        self.receivedRawVideoFrame(&SPS)
+        //        self.receivedRawVideoFrame(&PPS)
         
     }
     
@@ -80,9 +109,9 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         }
         
         DispatchQueue.global(qos: .userInteractive).async {
-                   sleep(1)
+            sleep(1)
             self.fxnB(&b)
-               }
+        }
     }
     
     func fxnB(_ data: inout UInt8){
@@ -113,21 +142,21 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //        }
     }
     func SendClientDimension(){
-            let x = TCPClient(host: "192.168.0.7",port: 5001)
-            //            let screenSize     = UIScreen.main.bounds
-            //            if x.Send(data: Data("display:\(screenSize.width).\(screenSize.width).640\n".utf8)){
-            if x.Send(data: Data("display:1440.2880.640\n".utf8)){
-                print("Couldn't connect to AOSP TCP Server");
-            }
-            else{
-                print("TCP Data Sent!!!")
-            }
+        let x = TCPClient(host: "192.168.0.7",port: 5001,delegate: nil)
+        //            let screenSize     = UIScreen.main.bounds
+        //            if x.Send(data: Data("display:\(screenSize.width).\(screenSize.width).640\n".utf8)){
+        if x.send(data: Data("display:1440.2880.640\n".utf8)){
+            print("Couldn't connect to AOSP TCP Server");
+        }
+        else{
+            print("TCP Data Sent!!!")
+        }
         
     }
     func testTCPClient(){
-        let x = TCPClient(host: "localhost",port: 2399)
+        let x = TCPClient(host: "localhost",port: 2399,delegate: nil)
         for i in 1...5{
-            _ = x.Send(data: Data("Test String \(i)\n".utf8))
+            _ = x.send(data: Data("Test String \(i)\n".utf8))
             sleep(3)
         }
         
@@ -139,7 +168,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //3. Reveibed NAL UNIT now we need to send this NAL Unit to decoder.
         // Expectation : NAL Units are separated with 0x00 00 00 01. All SPS, PPS and IDR, VCL Frame. Everything must be separated
         
-//        nalu.data!.hex()
+        //        nalu.data!.hex()
         var rawPayload: VideoPacket = [UInt8] (nalu.data!)
         // We need to separate the packets and also add sentinel at the front of each packet.
         
@@ -195,7 +224,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         
         
-//        self.receivedRawVideoFrame(&pck)    //This is where we revceive the packet and process it. Here we have to receive the packet.
+        //        self.receivedRawVideoFrame(&pck)    //This is where we revceive the packet and process it. Here we have to receive the packet.
         
         
     }
@@ -263,7 +292,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     
     func receivedRawVideoFrame(_ videoPacket: inout VideoPacket) {
         
-//        _ = Data(videoPacket).hex()
+        //        _ = Data(videoPacket).hex()
         //Comment 4: Replace start code with nal size for iOS.
         var biglen = CFSwapInt32HostToBig(UInt32(videoPacket.count - 4))
         memcpy(&videoPacket, &biglen, 4)

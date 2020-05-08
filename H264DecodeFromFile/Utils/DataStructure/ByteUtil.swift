@@ -7,7 +7,6 @@
 //
 
 class ByteUtil {
-    
     static func bytesToUInt16 (_ bytes: ArraySlice<UInt8>) -> UInt16 {
         
         let bigEndianValue = bytes.withUnsafeBufferPointer {
@@ -28,3 +27,6 @@ class ByteUtil {
         
     }
 }
+
+
+

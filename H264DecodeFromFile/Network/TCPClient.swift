@@ -1,70 +1,36 @@
-//
-//  TCPClient.swift
-//  H264DecodeFromFile
-//
-//  Created by Anish Byanjankar on 2020/04/27.
-//  Copyright © 2020 Anish Byanjankar. All rights reserved.
-//
-
 import Foundation
 import Network
 
-class TCPClient: Connection{
-    
-    
+@available(macOS 10.14, *)
+class TCPClient {
     let host: NWEndpoint.Host
     let port: NWEndpoint.Port
-    let queue = DispatchQueue(label: "TCP Clinet Connection")
-    var nwConnection: NWConnection!
-    var didStopCallback: ((Error?) -> Void)? = nil
     
-    init(host: String, port: UInt16) {
+    let queue = DispatchQueue(label: "TCP Client Packet Receiver Queue")
+    var nwConnection: NWConnection? = nil
+    var connected: Bool = false
+    var delegate: TransportDelegate?
+    
+    
+    init(host: String, port: UInt16, delegate: TransportDelegate?) {
         self.host = NWEndpoint.Host(host)
         self.port = NWEndpoint.Port(rawValue: port)!
-        nwConnection = NWConnection(host: self.host, port: self.port, using: .tcp)
-        nwConnection.stateUpdateHandler = stateDidChange(to:)
-        nwConnection.start(queue: queue)
+        self.delegate = nil
         
-        print("TCP Connection Started")
+        self.start()
         
-    }
-    func Send(data: Data) -> Bool {
-        var sent = true
-        nwConnection!.send(content: data, completion: .contentProcessed( { error in
-            if let error = error {
-                self.connectionDidFail(error: error)
-                sent = false
-                return
-            }
-            print("TCP Connection did send, data: \(data as NSData)")
-        }))
-        return sent
-    }
-    
-    func Receive() -> Data? {
-        var receivedData: Data?
-        nwConnection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { (data, _, isComplete, error) in
-            if let data = data, !data.isEmpty {
-                let message = String(data: data, encoding: .utf8)
-                print("\n\nConnection did receive, data: \(data as NSData) string: \(message ?? "-" )")
-                receivedData = data
-            }
-            if isComplete {
-                self.connectionDidEnd()
-            } else if let error = error {
-                self.connectionDidFail(error: error)
-            }
-        }
-        return receivedData ?? nil
         
     }
     
-    func didStopCallback(error: Error?) {
-        if error == nil {
-            exit(EXIT_SUCCESS)
-        } else {
-            exit(EXIT_FAILURE)
-        }
+    
+    func start() {
+        print("\nConnecting to \(host) \(port)")
+        self.nwConnection = NWConnection(host: self.host, port: self.port, using: .tcp)
+        self.nwConnection?.stateUpdateHandler = stateDidChange(to:)
+        self.nwConnection?.start(queue: queue)
+        
+        
+        
     }
     
     
@@ -73,6 +39,10 @@ class TCPClient: Connection{
         case .waiting(let error):
             connectionDidFail(error: error)
         case .ready:
+            self.connected = true
+            self.setupReceive()
+            let r: String = "Client Says Hello!"
+            _ = self.send(data: r.data(using: .utf8)!)
             print("Client connection ready")
         case .failed(let error):
             connectionDidFail(error: error)
@@ -82,7 +52,55 @@ class TCPClient: Connection{
     }
     
     
+    //Connection
     
+    
+    
+    private func setupReceive() {
+        self.nwConnection?.receive(minimumIncompleteLength: 1, maximumLength: 65536) { (data, _, isComplete, error) in
+            if let data = data, !data.isEmpty {
+                self.delegate?.datagramReceived([UInt8] (data))
+                
+                if isComplete {
+                    print("Connection Completed!!")
+                } else if let error = error {
+                    self.connectionDidFail(error: error)
+                } else {
+                    self.setupReceive()
+                }
+            }
+        }
+    }
+    
+    
+//    func processStream(){
+//        //        while true{
+//        //            self.receivedDataHandlerQueue.sync {
+//        if self.receivedPacket!.count>14{
+//            let headerChunk = [UInt8] (self.receivedPacket![0...13])
+//            let dataLength = ByteUtil.bytesToUInt16(headerChunk[12...13])
+//
+//            let rtpPacketRaw = self.receivedPacket![0...dataLength-1]
+//            self.receivedPacket = self.receivedPacket![dataLength...]
+//            self.receivedPacket!.hex()
+//            rtpPacketRaw.hex()
+//        }
+//
+//        //            }
+//        //        }
+//    }
+    
+    
+    func send(data: Data) -> Bool{
+        self.nwConnection?.send(content: data, completion: .contentProcessed( { error in
+            if let error = error {
+                print("Error while sending data to server...")
+                self.connectionDidFail(error: error)
+                return
+            }
+        }))
+        return true
+    }
     
     func stop() {
         print("connection will stop")
@@ -90,7 +108,7 @@ class TCPClient: Connection{
     }
     
     private func connectionDidFail(error: Error) {
-        print("connection did fail, error: \(error)")
+        print("Connection did fail, error: \(error)")
         self.stop(error: error)
     }
     
@@ -100,12 +118,17 @@ class TCPClient: Connection{
     }
     
     private func stop(error: Error?) {
-        self.nwConnection.stateUpdateHandler = nil
-        self.nwConnection.cancel()
-        if let didStopCallback = self.didStopCallback {
-            self.didStopCallback = nil
-            didStopCallback(error)
-        }
+        self.nwConnection?.stateUpdateHandler = nil
+        self.nwConnection?.cancel()
+        didStopCallback(error: error)
+        
     }
-    
+    func didStopCallback(error: Error?) {
+        
+        print("\(String(describing: error))")
+        
+        //            print(error)
+        //            exit(EXIT_FAILURE)
+        
+    }
 }

@@ -22,6 +22,6 @@ extension Data {
 }
 
 
-func hex(data: [UInt8]){
+func hex(_ data: [UInt8]){
     print(Data(data).hex())
 }
