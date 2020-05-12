@@ -27,25 +27,25 @@ class AVCDefragmenter {
         }
         
         let ts = CMTimeMake(value: Int64(rtpPacket.timestamp), timescale: 90000);
-        let nalu = AVCNALUnit(data: rtpPacket.payload, timestamp: ts)
+        var nalu: NALUnit = AVCNALUnit(data: rtpPacket.payload, timestamp: ts)
         
         if nalu.type == .AVC_RTP_FU_A || nalu.type == .AVC_RTP_FU_B {
-            let fragmentedPacket = AVCNALUFragment(data: nalu.data!, timestamp: ts, sequenceNumber: rtpPacket.sequence, type: nalu.type);
+            var fragmentedPacket: NALUFragment = AVCNALUFragment(data: nalu.data!, timestamp: ts, sequenceNumber: rtpPacket.sequence, type: nalu.type);
             
-            didReceiveFU(fragmentedPacket)
+            didReceiveFU(&fragmentedPacket)
             return
         }
         //For packet containing single NAL Unit.
-        delegate?.didReceiveNALUnit(nalu)
+        delegate?.didReceiveNALUnit(&nalu)
     }
     
     // This function assembles complete NAL units
     // from NALU fragments
-    func didReceiveFU (_ fragment: NALUFragment) {
+    func didReceiveFU (_ fragment: inout NALUFragment) {
         // If the current fragmented NALU timestamp does not
         // match the received unit, close the current NALU
         if fragmentedNALU != nil && fragmentedNALU!.timestamp != fragment.timestamp {
-            didAssembleFU(fragmentedNALU!)//Send the portion of data that we have collected so far in the past.
+            didAssembleFU(&fragmentedNALU!)//Send the portion of data that we have collected so far in the past.
             fragmentedNALU = nil
         }
         if fragmentedNALU == nil {
@@ -59,11 +59,12 @@ class AVCDefragmenter {
     }
     
     //Assembles the FU Packets
-    func didAssembleFU (_ nalu: FragmentedNALU) {
+    func didAssembleFU (_ nalu: inout FragmentedNALU) {
         guard let unitData = nalu.data else {
             print("Skipping fragmented NALU because it does not contain any data")
             return
         }
-        delegate?.didReceiveNALUnit(AVCNALUnit(data: unitData, timestamp: nalu.timestamp))
+        var nalUnitToSend: NALUnit = AVCNALUnit(data: unitData, timestamp: nalu.timestamp)
+        delegate?.didReceiveNALUnit(&nalUnitToSend)
     }
 }

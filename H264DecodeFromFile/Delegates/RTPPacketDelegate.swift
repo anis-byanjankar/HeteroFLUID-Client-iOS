@@ -10,5 +10,5 @@ import Foundation
 
 
 protocol RTPPacketDelegate {
-    func didReceiveRTPPacket (packet: RTPPacket)
+    func didReceiveRTPPacket(packet: RTPPacket)
 }

@@ -9,5 +9,5 @@
 import Foundation
 
 protocol VideoDecoderDelegate {
-    func didReceiveNALUnit (_ nalu: NALUnit)
+    func didReceiveNALUnit (_ nalu: inout NALUnit)
 }

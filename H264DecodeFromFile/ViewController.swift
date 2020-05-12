@@ -12,7 +12,10 @@ import AVFoundation
 
 
 class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
-    let DEBUG: Bool! = false;
+    let TAG: String = "ViewController"
+    let DEBUG: Bool! = true;
+    let videoProcessor = DispatchQueue(label: "VideoDecoder",qos: .userInteractive)
+    let displayProcessor = DispatchQueue(label: "Display Blit Processor",qos: .userInteractive)
     
     
     var formatDesc: CMVideoFormatDescription?
@@ -67,12 +70,12 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             
             
             self.client = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
-            sleep(2)
+            //            sleep(2)
             
             while self.client?.connected == false{
                 self.client?.stop()
                 self.client = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
-                sleep(2)
+                sleep(1)
                 self.client?.delegate = self.rtpParser
                 
             }
@@ -143,9 +146,10 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     }
     func SendClientDimension(){
         let x = TCPClient(host: "192.168.0.7",port: 5001,delegate: nil)
-        //            let screenSize     = UIScreen.main.bounds
-        //            if x.Send(data: Data("display:\(screenSize.width).\(screenSize.width).640\n".utf8)){
-        if x.send(data: Data("display:1440.2880.640\n".utf8)){
+        let screenSize     = UIScreen.main.bounds
+        print("display:\(screenSize.width).\(screenSize.height).640\n".utf8)
+        if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).640\n".utf8)){
+            //        if x.send(data: Data("display:140.280.140\n".utf8)){
             print("Couldn't connect to AOSP TCP Server");
         }
         else{
@@ -162,7 +166,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
     }
     //Here we receive the concatenated NAL Units
-    func didReceiveNALUnit(_ nalu: NALUnit) {
+    func didReceiveNALUnit(_ nalu: inout NALUnit) {
         //        print("NAL UNITS RECEIVED!!!!")
         //        nalu.data?.hex()
         //3. Reveibed NAL UNIT now we need to send this NAL Unit to decoder.
@@ -182,28 +186,30 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         //find second start code,NO StartCode: STRIPPED FROM AOSP , so startIndex = 0
         var first = true
-        var startIndex = 1
+        var startIndex = 4
         
+        
+        var packetSend: Array<UInt8>? = nil;
         while ((startIndex + 3) < rawPayload.count) {
             if Array(rawPayload[startIndex...startIndex+3]) == startCode {
                 
-                var packetSend = Array(rawPayload[0..<startIndex])
+                packetSend = Array(rawPayload[0..<startIndex])
+                
                 rawPayload.removeSubrange(0..<startIndex)
                 if first == true{
-                    packetSend = [UInt8] ([0,0,0,1]) + packetSend
+                    packetSend = [UInt8] ([0,0,0,1]) + packetSend!
                     first = false
                 }
                 
                 //Update the payload and send the RTP packet
-                var tmpNALUPacket = packetSend
-                DispatchQueue.global(qos: .userInteractive).sync {
-                    self.receivedRawVideoFrame(&tmpNALUPacket)
-                }
+                var tmpNALUPacket = packetSend!
+                self.receivedRawVideoFrame(&tmpNALUPacket)
+                
                 
                 if DEBUG{
-                    Data(packetSend).hex()
+//                    Data(packetSend!).hex()
                 }
-                startIndex = 1
+                startIndex = 4
             }
             startIndex += 1
         }
@@ -211,15 +217,14 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //Only one Fragmented Packet.
         if first == true{
             rawPayload = [UInt8] ([0,0,0,1]) + rawPayload
+            
         }
         
         
         //Update the payload and send the RTP packet in RTP.payload
-        DispatchQueue.global(qos: .userInteractive).sync {
-            self.receivedRawVideoFrame(&rawPayload)
-        }
+        self.receivedRawVideoFrame(&rawPayload)
         if DEBUG{
-            Data(rawPayload).hex()
+//            Data(rawPayload).hex()
         }
         
         
@@ -299,40 +304,52 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         let nalType = videoPacket[4] & 0x1F
         
-        print("Code:112 - Read Nalu size \(videoPacket.count)");
-        
+        if DEBUG==true{
+            print("\(TAG): Code:112 - Read Nalu size \(videoPacket.count)");
+        }
         switch nalType {
         case 0x05:
-            print("Code:112 - Nal type is IDR frame")
+            if DEBUG==true{
+                
+                print("\(TAG): Code:112 - Nal type is IDR frame")
+            }
             if createDecompSession() {
-                decodeVideoPacket(videoPacket)
+                decodeVideoPacket(&videoPacket)
             }
         case 0x07:
-            print("Code:112 - Nal type is SPS")
+            if DEBUG==true{
+                print("\(TAG): Code:112 - Nal type is SPS")
+            }
             spsSize = videoPacket.count - 4
             sps = Array(videoPacket[4..<videoPacket.count])
             
             //            _ = Data(videoPacket).hex()
         //            _ = Data(sps!).hex()
         case 0x08:
-            print("Code:112 - Nal type is PPS")
+            if DEBUG==true{
+                print("\(TAG): Code:112 - Nal type is PPS")
+            }
             ppsSize = videoPacket.count - 4
             pps = Array(videoPacket[4..<videoPacket.count])
             
             //            _ = Data(videoPacket).hex()
         //            _ = Data(pps!).hex()
         default:
-            print("Code:112 - Nal type is B/P frame")
+            if DEBUG==true{
+                print("\(TAG): Code:112 - Nal type is B/P frame")
+            }
             
-            decodeVideoPacket(videoPacket)
+            decodeVideoPacket(&videoPacket)
             break;
             
         }
-        print("\n")
+        if DEBUG==true{
+            print("\n")
+        }
         
     }
     
-    func decodeVideoPacket(_ videoPacket: VideoPacket) {
+    func decodeVideoPacket(_ videoPacket: inout VideoPacket) {
         //Comment 5: NAL Unit is being allocated to the pointer.
         let bufferPointer = UnsafeMutablePointer<UInt8>(mutating: videoPacket)
         
@@ -371,7 +388,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             //Comment 6: diaplay with AVSampleBufferDisplayLayer by enqueing the buffer into the queue.
             self.videoLayer?.enqueue(buffer)
             
-            DispatchQueue.main.async(execute: {
+            displayProcessor.async(execute: {
                 self.videoLayer?.setNeedsDisplay()
             })
             
@@ -383,7 +400,9 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                                                        flags: [._EnableAsynchronousDecompression],
                                                        frameRefcon: &outputBuffer, infoFlagsOut: &flagOut)
             if status == noErr {
-                print("VideoSession: OK!!!")
+                if DEBUG==true{
+                    print("VideoSession: OK!!!")
+                }
             }else if(status == kVTInvalidSessionErr) {
                 print("IOS8VT: Invalid session, reset decoder session");
             } else if(status == kVTVideoDecoderBadDataErr) {
@@ -450,7 +469,10 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     }
     
     func displayDecodedFrame(_ imageBuffer: CVImageBuffer?) {
-        print("Frame Parsed")
+        if DEBUG==true{
+            
+            print("\(TAG): Frame Parsed")
+        }
     }
     
 }

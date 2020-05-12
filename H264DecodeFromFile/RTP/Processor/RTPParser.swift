@@ -9,15 +9,18 @@
 import Foundation
 
 class RTPParser: TransportDelegate {
-    let DEBUG: Bool = true
+    let DEBUG: Bool = false
     let TAG: String = "RTPParser: "
     var mode: String = "UDP"
+    
+    let rtpProcessor = DispatchQueue(label: "RTP Parser",qos: .userInteractive)
+
     private var receivedPackets: UInt = 0
     private var lostPackets: UInt = 0 
     
     var delegate: RTPPacketDelegate? = nil
     
-    let QUEUE_CAPACITY = 50
+    let QUEUE_CAPACITY = 10
     var expectedRTPPacketSequence: UInt16? = nil
     var rtpPacketOrderQueue: [RTPPacket] = []
     
@@ -142,10 +145,11 @@ class RTPParser: TransportDelegate {
         if mode == "UDP"{
             expectedRTPPacketSequence = UInt16((Int(packet.sequence) + 1) % 65535)
         }
-        print("\(TAG) Sequence Number UDP: \(packet.sequence)")
-      
+        if DEBUG{
+            print("\(TAG) Sequence Number: \(packet.sequence)")
+        }
         
-        DispatchQueue.global(qos: .userInteractive).sync {
+        rtpProcessor.async {
             self.delegate?.didReceiveRTPPacket(packet: packet)
         }
     }

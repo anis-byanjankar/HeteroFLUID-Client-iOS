@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 
 struct FragmentedNALU: NALUnit {    
-    let DEBUG: Bool = true;
+    let DEBUG: Bool = false;
     let TAG: String = "FragmentedNALU"
     var type: NALUType = NALUType.FU
     var fragments: [NALUFragment]
