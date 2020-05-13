@@ -11,6 +11,9 @@ import AVFoundation
 import VideoToolbox
 
 class AVCDefragmenter {
+    let DEBUG: Bool = true;
+    let TAG: String = "AVCDefragmenter";
+
     var delegate: VideoDecoderDelegate?
     // Intermediate container for holding
     // NALU fragments
@@ -22,7 +25,9 @@ class AVCDefragmenter {
         
         //2. Reveived RTP packet and We will try to parse this into NAL Units to send it to Decoder.
         guard rtpPacket.payload.count != 0 else {
-            print("No NALU data received")
+            if DEBUG{
+                print("\(TAG): No NALU data received")
+            }
             return
         }
         

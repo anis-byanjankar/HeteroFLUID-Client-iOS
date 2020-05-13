@@ -10,7 +10,7 @@ import Foundation
 import AVFoundation
 
 struct FragmentedNALU: NALUnit {    
-    let DEBUG: Bool = false;
+    let DEBUG: Bool = true;
     let TAG: String = "FragmentedNALU"
     var type: NALUType = NALUType.FU
     var fragments: [NALUFragment]
@@ -67,6 +67,12 @@ struct FragmentedNALU: NALUnit {
             print("\(TAG) Skipping NALU due to missing starting fragment")
             return nil
         }
+        
+        if let data = sortedFragments.last?.isEndUnit, !data {
+            print("\(TAG) Skipping NALU due to missing ending fragment")
+            return nil
+        }
+        
         
         let naluHeader = Data(sortedFragments.first!.naluHeader)
         
