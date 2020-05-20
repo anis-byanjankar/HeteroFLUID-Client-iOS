@@ -37,6 +37,9 @@ struct FragmentedNALU: NALUnit {
         // should only contain contiguous fragments (i.e. in case
         // the n-th fragment is lost, the resulting NAL unit should
         // only contain the first n-1 fragments)
+        
+        
+        //TODO : This is one of the bottlenecking part. This part must be handled well.
 //        var sortedFragments = fragments.sorted(by: { (a, b) -> Bool in
 //            let seqA: UInt16 = a.sequenceNumber
 //            let seqB: UInt16 = b.sequenceNumber

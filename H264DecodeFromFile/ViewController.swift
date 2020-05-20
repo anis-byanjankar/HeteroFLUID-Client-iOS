@@ -16,7 +16,8 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     let DEBUG: Bool! = true;
     let videoProcessor = DispatchQueue(label: "VideoDecoder",qos: .userInteractive)
     let displayProcessor = DispatchQueue(label: "Display Blit Processor",qos: .userInteractive)
-    
+    let defragProcessor = DispatchQueue(label: "Defrag Processor",qos: .userInteractive)
+
     
     var formatDesc: CMVideoFormatDescription?
     var decompressionSession: VTDecompressionSession?
@@ -41,7 +42,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
 
     
     let mode: String = "TCP"
-    let networkModeNIO: Bool = false
+    let networkModeNIO: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -212,11 +213,11 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                 
                 //Update the payload and send the RTP packet
                 var tmpNALUPacket = packetSend!
-                DispatchQueue.main.async {
-
-                self.receivedRawVideoFrame(&tmpNALUPacket)
+                    self.videoProcessor.async {
+                        self.receivedRawVideoFrame(&tmpNALUPacket)
+                    }
                 
-                }
+                
                 if DEBUG{
 //                    Data(packetSend!).hex()
                 }
@@ -233,10 +234,9 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         
         //Update the payload and send the RTP packet in RTP.payload
-        DispatchQueue.main.async {
-            self.receivedRawVideoFrame(&rawPayload)
-
-        }
+            self.videoProcessor.sync {
+                self.receivedRawVideoFrame(&rawPayload)
+            }
         if DEBUG{
 //            Data(rawPayload).hex()
         }
@@ -257,7 +257,9 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         }
         //packet.payload.hex()
         //1. Got Data and parsed datagram packet into RTP packet. Now this is send to Defragmnenter.
-        self.defragmenter?.didReceiveRTPPacket(rtpPacket: packet)
+        defragProcessor.async {
+            self.defragmenter?.didReceiveRTPPacket(rtpPacket: packet)
+        }
         
     }
     

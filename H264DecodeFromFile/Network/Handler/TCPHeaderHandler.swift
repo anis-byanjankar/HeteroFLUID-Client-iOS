@@ -22,8 +22,6 @@ class TCPHeaderHandler: ChannelInboundHandler {
     var TAG: String {
         return String(describing: type(of: self))
     }
-    let processor = DispatchQueue(label: "Processor",qos: .userInitiated)
-    let byteProcessor = DispatchQueue(label: "Processor",qos: .userInteractive)
     let byteProcessorWrapper = DispatchQueue(label: "Processor",qos: .background)
     
     
@@ -33,40 +31,16 @@ class TCPHeaderHandler: ChannelInboundHandler {
     }
     
     public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
-        byteProcessorWrapper.async {
-            var buffer = self.unwrapInboundIn(data)
-            self.byteProcessor.sync {
-                if let receivedData = buffer.readBytes(length: buffer.readableBytes) {
-                    TCPClientNIO.delegate?.datagramReceived(receivedData)
-
-                    
-//                    print("\(self.TAG) -> Data Received on Client!")
-//                    if self.streamBuffer == nil{
-//                        self.streamBuffer = receivedData
-//                    }
-//                    else{
-//                        self.streamBuffer = self.streamBuffer! + receivedData
-//                    }
-//                    let length = ByteUtil.bytesToUInt16(self.streamBuffer![12...13])
-//
-//                    if self.streamBuffer!.count > length {
-//                        let packet = [UInt8] (self.streamBuffer![0..<Int(length)])
-//
-//                        self.streamBuffer!.removeSubrange(0..<Int(length))
-//                        self.processor.async {
-//                            //                    self.parse(receivedData: packet)
-//                            TCPClientNIO.delegate?.datagramReceived(packet)
-//                        }
-//                        //                context.fireChannelRead(self.wrapOutboundOut(packet))
-//                        self.flushed = true
-//                    }
-                }
-                else{
-                    print("\(self.TAG) -> No Data in Buffer")
-                }
+        
+        var buffer = self.unwrapInboundIn(data)
+        if let receivedData = buffer.readBytes(length: buffer.readableBytes) {
+            byteProcessorWrapper.async {
+                TCPClientNIO.delegate?.datagramReceived(receivedData)
             }
         }
-        
+        else{
+            print("\(self.TAG) -> No Data in Buffer")
+        }
     }
     
     public func errorCaught(context: ChannelHandlerContext, error: Error) {
