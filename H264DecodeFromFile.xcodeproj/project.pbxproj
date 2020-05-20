@@ -20,6 +20,8 @@
 		F853AEEA2452CE150037DDED /* mtv.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEE92452CE150037DDED /* mtv.h264 */; };
 		F853AEEF2452CE440037DDED /* H264.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEEC2452CE430037DDED /* H264.h264 */; };
 		F853AEF02452CE440037DDED /* nature.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEED2452CE440037DDED /* nature.h264 */; };
+		F85DB2A42474BE90001686A8 /* TCPClientNIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */; };
+		F85DB2A62474BEB6001686A8 /* TCPHeaderHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */; };
 		F8C1A8F924568B8200EA9564 /* UDPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8F824568B8200EA9564 /* UDPServer.swift */; };
 		F8C1A8FB24568B9600EA9564 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8FA24568B9600EA9564 /* Connection.swift */; };
 		F8C1A9012457DA5400EA9564 /* RTPParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A9002457DA5400EA9564 /* RTPParser.swift */; };
@@ -56,6 +58,8 @@
 		F853AEE92452CE150037DDED /* mtv.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = mtv.h264; sourceTree = "<group>"; };
 		F853AEEC2452CE430037DDED /* H264.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = H264.h264; sourceTree = "<group>"; };
 		F853AEED2452CE440037DDED /* nature.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = nature.h264; sourceTree = "<group>"; };
+		F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPClientNIO.swift; sourceTree = "<group>"; };
+		F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPHeaderHandler.swift; sourceTree = "<group>"; };
 		F8C1A8F824568B8200EA9564 /* UDPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPServer.swift; sourceTree = "<group>"; };
 		F8C1A8FA24568B9600EA9564 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		F8C1A9002457DA5400EA9564 /* RTPParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTPParser.swift; sourceTree = "<group>"; };
@@ -136,6 +140,14 @@
 			path = H264DecodeFromFile;
 			sourceTree = "<group>";
 		};
+		F85DB2A72474BEBA001686A8 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
 		F89F0ECE95CD141F20598DAF /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -148,7 +160,9 @@
 		F8C1A8F524568B3B00EA9564 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				F85DB2A72474BEBA001686A8 /* Handler */,
 				F81A86DC2464FC7800E7CDBC /* TCPClient.swift */,
+				F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */,
 				F8C1A8F824568B8200EA9564 /* UDPServer.swift */,
 				F8C1A8FA24568B9600EA9564 /* Connection.swift */,
 				F8C1A9212458003F00EA9564 /* Server.swift */,
@@ -341,6 +355,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8C1A92E24580A9200EA9564 /* AVCNALUnit.swift in Sources */,
+				F85DB2A42474BE90001686A8 /* TCPClientNIO.swift in Sources */,
 				F8C1A93124580A9200EA9564 /* NALUnit.swift in Sources */,
 				F8C1A93424580ACD00EA9564 /* VideoDecoderDelegate.swift in Sources */,
 				F8C1A8F924568B8200EA9564 /* UDPServer.swift in Sources */,
@@ -355,6 +370,7 @@
 				F853AED42452CCEE0037DDED /* AppDelegate.swift in Sources */,
 				F8C1A9222458003F00EA9564 /* Server.swift in Sources */,
 				F8C1A92F24580A9200EA9564 /* FragmentedNALUnit.swift in Sources */,
+				F85DB2A62474BEB6001686A8 /* TCPHeaderHandler.swift in Sources */,
 				F853AEE82452CD170037DDED /* VideoFileReader.swift in Sources */,
 				F853AED62452CCEE0037DDED /* SceneDelegate.swift in Sources */,
 				F8C1A8FB24568B9600EA9564 /* Connection.swift in Sources */,

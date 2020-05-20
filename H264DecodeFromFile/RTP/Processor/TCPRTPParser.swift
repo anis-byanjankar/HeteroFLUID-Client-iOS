@@ -10,7 +10,7 @@ import Foundation
 class TCPRTPParser: RTPParser {
     var streamBuffer: [UInt8]? = nil
     let receivedDataHandlerQueue = DispatchQueue(label: "TCP Data Handler",qos: .userInitiated)
-    let stremeProcessor = DispatchQueue(label: "TCP Stream Processor",qos: .userInitiated)
+    let stremeProcessor = DispatchQueue(label: "TCP Stream Processor",qos: .userInteractive)
     
     override func datagramReceived (_ data: [UInt8]) {
         if self.streamBuffer == nil{

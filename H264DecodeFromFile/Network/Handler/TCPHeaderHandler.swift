@@ -1,0 +1,80 @@
+//
+//  TCPHeaderHandler.swift
+//  HeteroFLUID-ProxyAPP
+//
+//  Created by Anish Byanjankar on 2020/05/15.
+//  Copyright © 2020 Anish Byanjankar. All rights reserved.
+//
+
+import Foundation
+import NIO
+
+class TCPHeaderHandler: ChannelInboundHandler {
+    let DEBUG = false;
+    public typealias InboundIn   = ByteBuffer
+    public typealias OutboundOut = [UInt8]
+    private var length: UInt16 = 0
+    private var flushed = false
+    
+    var streamBuffer: [UInt8]? = nil
+    
+    
+    var TAG: String {
+        return String(describing: type(of: self))
+    }
+    let processor = DispatchQueue(label: "Processor",qos: .userInitiated)
+    let byteProcessor = DispatchQueue(label: "Processor",qos: .userInteractive)
+    let byteProcessorWrapper = DispatchQueue(label: "Processor",qos: .background)
+    
+    
+    public func channelActive(context: ChannelHandlerContext) {
+        print("\(TAG) -> Connection activated!")
+        // We are connected. It's time to send the message to the server to initialize the ping-pong sequence
+    }
+    
+    public func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        byteProcessorWrapper.async {
+            var buffer = self.unwrapInboundIn(data)
+            self.byteProcessor.sync {
+                if let receivedData = buffer.readBytes(length: buffer.readableBytes) {
+                    TCPClientNIO.delegate?.datagramReceived(receivedData)
+
+                    
+//                    print("\(self.TAG) -> Data Received on Client!")
+//                    if self.streamBuffer == nil{
+//                        self.streamBuffer = receivedData
+//                    }
+//                    else{
+//                        self.streamBuffer = self.streamBuffer! + receivedData
+//                    }
+//                    let length = ByteUtil.bytesToUInt16(self.streamBuffer![12...13])
+//
+//                    if self.streamBuffer!.count > length {
+//                        let packet = [UInt8] (self.streamBuffer![0..<Int(length)])
+//
+//                        self.streamBuffer!.removeSubrange(0..<Int(length))
+//                        self.processor.async {
+//                            //                    self.parse(receivedData: packet)
+//                            TCPClientNIO.delegate?.datagramReceived(packet)
+//                        }
+//                        //                context.fireChannelRead(self.wrapOutboundOut(packet))
+//                        self.flushed = true
+//                    }
+                }
+                else{
+                    print("\(self.TAG) -> No Data in Buffer")
+                }
+            }
+        }
+        
+    }
+    
+    public func errorCaught(context: ChannelHandlerContext, error: Error) {
+        print("\(TAG)-> Error: ", error)
+        
+        // As we are not really interested getting notified on success or failure we just pass nil as promise to
+        // reduce allocations.
+        context.close(promise: nil)
+    }
+    
+}

@@ -36,9 +36,12 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     var AOSPServer: String = "192.168.0.7"
     var port: UInt16 = 9879
     
-    var client: TCPClient? = nil
+    var tcpClient: TCPClient? = nil
+    var tcpClientNIO: TCPClientNIO? = nil
+
     
     let mode: String = "TCP"
+    let networkModeNIO: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,27 +66,33 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             break
         }
         
-        DispatchQueue.global(qos: .userInteractive).async {
+        
+        if self.networkModeNIO {
             self.SendClientDimension()//Send the dimension of device to android.
-            
-            
-            
-            
-            self.client = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
-            //            sleep(2)
-            
-            while self.client?.connected == false{
-                self.client?.stop()
-                self.client = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
-                sleep(1)
-                self.client?.delegate = self.rtpParser
-                
+            //SWIFT NIO Version
+            self.tcpClientNIO = TCPClientNIO(host: self.AOSPServer, port: Int(self.port), delegate: self.rtpParser!)
+            try? self.tcpClientNIO?.start()
+        }
+        else{
+            DispatchQueue.global(qos: .userInteractive).async {
+                self.SendClientDimension()//Send the dimension of device to android.
+        
+                self.tcpClient = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
+                //            sleep(2)
+
+                while self.tcpClient?.connected == false{
+                    self.tcpClient?.stop()
+                    self.tcpClient = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
+                    sleep(1)
+                    self.tcpClient?.delegate = self.rtpParser
+
+                }
             }
         }
         
         
         rtpParser?.delegate = self
-        //        _ = try! UDPServer(port: 9876,parser: rtpParser!)//HardCoded in the AOSP ARTPWriter
+        //        _ = try! UDPServer(port: 9876,parser: rtpParser!)//HardCoded in the AOSP ARTPWriterd
         //        sleep(1)
         
         defragmenter = AVCDefragmenter()
@@ -203,9 +212,11 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                 
                 //Update the payload and send the RTP packet
                 var tmpNALUPacket = packetSend!
+                DispatchQueue.main.async {
+
                 self.receivedRawVideoFrame(&tmpNALUPacket)
                 
-                
+                }
                 if DEBUG{
 //                    Data(packetSend!).hex()
                 }
@@ -222,7 +233,10 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         
         //Update the payload and send the RTP packet in RTP.payload
-        self.receivedRawVideoFrame(&rawPayload)
+        DispatchQueue.main.async {
+            self.receivedRawVideoFrame(&rawPayload)
+
+        }
         if DEBUG{
 //            Data(rawPayload).hex()
         }

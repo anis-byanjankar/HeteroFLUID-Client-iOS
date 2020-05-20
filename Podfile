@@ -6,6 +6,6 @@ target 'H264DecodeFromFile' do
   use_frameworks!
 
   # Pods for H264DecodeFromFile
-  pod 'CocoaAsyncSocket'
+  pod 'SwiftNIO','~> 2.17.0'
 
 end

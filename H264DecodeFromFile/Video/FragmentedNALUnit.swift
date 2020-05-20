@@ -37,26 +37,27 @@ struct FragmentedNALU: NALUnit {
         // should only contain contiguous fragments (i.e. in case
         // the n-th fragment is lost, the resulting NAL unit should
         // only contain the first n-1 fragments)
-        var sortedFragments = fragments.sorted(by: { (a, b) -> Bool in
-            let seqA: UInt16 = a.sequenceNumber
-            let seqB: UInt16 = b.sequenceNumber
-            return seqA <= seqB
-        })
-        sortedFragments = sortedFragments.filter({ (a) -> Bool in
-            // TODO: handle sequence reset
-            //Remove all packets after one missing packet.
-            if falseFlag == true{
-                return false
-            }
-            
-            let included = (lastFragmentSequence == nil || lastFragmentSequence == a.sequenceNumber-1)
-            lastFragmentSequence = a.sequenceNumber
-            
-            if included == false{
-                falseFlag = true;
-            }
-            return included
-        })
+//        var sortedFragments = fragments.sorted(by: { (a, b) -> Bool in
+//            let seqA: UInt16 = a.sequenceNumber
+//            let seqB: UInt16 = b.sequenceNumber
+//            return seqA <= seqB
+//        })
+//        sortedFragments = sortedFragments.filter({ (a) -> Bool in
+//            // TODO: handle sequence reset
+//            //Remove all packets after one missing packet.
+//            if falseFlag == true{
+//                return false
+//            }
+//
+//            let included = (lastFragmentSequence == nil || lastFragmentSequence == a.sequenceNumber-1)
+//            lastFragmentSequence = a.sequenceNumber
+//
+//            if included == false{
+//                falseFlag = true;
+//            }
+//            return included
+//        })
+        let sortedFragments = fragments
         
         if sortedFragments.count == 0{
             print("\(TAG) Error:223 - No Fragments !!!")

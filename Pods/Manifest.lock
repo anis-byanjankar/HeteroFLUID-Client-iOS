@@ -1,16 +1,37 @@
 PODS:
-  - CocoaAsyncSocket (7.6.4)
+  - CNIOAtomics (2.17.0)
+  - CNIODarwin (2.17.0)
+  - CNIOLinux (2.17.0)
+  - CNIOSHA1 (2.17.0)
+  - SwiftNIO (2.17.0):
+    - CNIOAtomics (= 2.17.0)
+    - CNIODarwin (= 2.17.0)
+    - CNIOLinux (= 2.17.0)
+    - CNIOSHA1 (= 2.17.0)
+    - SwiftNIOConcurrencyHelpers (= 2.17.0)
+  - SwiftNIOConcurrencyHelpers (2.17.0):
+    - CNIOAtomics (= 2.17.0)
 
 DEPENDENCIES:
-  - CocoaAsyncSocket
+  - SwiftNIO (~> 2.17.0)
 
 SPEC REPOS:
   trunk:
-    - CocoaAsyncSocket
+    - CNIOAtomics
+    - CNIODarwin
+    - CNIOLinux
+    - CNIOSHA1
+    - SwiftNIO
+    - SwiftNIOConcurrencyHelpers
 
 SPEC CHECKSUMS:
-  CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
+  CNIOAtomics: 54ece1dffda0a1df5326fdf5e18c71ad51ea4263
+  CNIODarwin: 55df13e7978fee38ce0fcd92430f0d03db56f8fe
+  CNIOLinux: 4213e184c15d8958be5e9109e5d5c38cec6877b2
+  CNIOSHA1: 375ed57ef2f83523912f2a656251d2eea30c0732
+  SwiftNIO: 4bbf418d785a26d5ea7530923c9b710efcc2aec4
+  SwiftNIOConcurrencyHelpers: 5ec28721d99be06fbbe1049e4e27fcab98dbb776
 
-PODFILE CHECKSUM: 0ff00dab7a506dbe56688aaadfa81c0e595c59b0
+PODFILE CHECKSUM: ab32567b595c9e54f04e4b2d427d22a08222a8c9
 
 COCOAPODS: 1.8.4
