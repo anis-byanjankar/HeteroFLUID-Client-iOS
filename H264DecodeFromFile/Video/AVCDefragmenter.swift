@@ -11,7 +11,7 @@ import AVFoundation
 import VideoToolbox
 
 class AVCDefragmenter {
-    let DEBUG: Bool = true;
+    let DEBUG: Bool = false;
     let TAG: String = "AVCDefragmenter";
 
     var delegate: VideoDecoderDelegate?

@@ -13,7 +13,7 @@ import AVFoundation
 
 class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     let TAG: String = "ViewController"
-    let DEBUG: Bool! = true;
+    let DEBUG: Bool = false;
     let videoProcessor = DispatchQueue(label: "VideoDecoder",qos: .userInteractive)
     let displayProcessor = DispatchQueue(label: "Display Blit Processor",qos: .userInteractive)
     let defragProcessor = DispatchQueue(label: "Defrag Processor",qos: .userInteractive)
