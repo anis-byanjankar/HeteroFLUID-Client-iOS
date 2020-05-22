@@ -11,6 +11,8 @@ class TCPRTPParser: RTPParser {
     var streamBuffer: [UInt8]? = nil
     let receivedDataHandlerQueue = DispatchQueue(label: "TCP Data Handler",qos: .userInitiated)
     let stremeProcessor = DispatchQueue(label: "TCP Stream Processor",qos: .userInteractive)
+    let packetHandler = DispatchQueue(label: "TCP Stream Processor",qos: .userInteractive)
+    var size: Int = 0
     
     override func datagramReceived (_ data: [UInt8]) {
         //Append new data to the buffer
@@ -21,35 +23,37 @@ class TCPRTPParser: RTPParser {
         else{
             self.streamBuffer = self.streamBuffer! + data
         }
-        
+        size = streamBuffer!.count
         
         //Release a RTP Packet from buffer.
-        var length = ByteUtil.bytesToUInt16(self.streamBuffer![12...13])
-        while self.streamBuffer!.count > length{
-
-            var packet = [UInt8] (self.streamBuffer![0..<Int(length)])
-            
-            self.streamBuffer!.removeSubrange(0..<Int(length))
-            
-            
-            self.stremeProcessor.async {
-                self.processStream(&packet)
-                if self.DEBUG{
-                    print("TCP Handler 2 :113: Next first byte: \(packet[0]) Size: \(self.streamBuffer?.count ?? 0) Length: \(length)")
+        if size > 14{
+            var length = ByteUtil.bytesToUInt16(self.streamBuffer![12...13])
+            while size > length{
+                
+                var packet = [UInt8] (self.streamBuffer![0..<Int(length)])
+                
+                self.streamBuffer!.removeSubrange(0..<Int(length))
+                
+                
+                self.stremeProcessor.async {
+                    self.processStream(&packet)
+                    if self.DEBUG{
+                        print("TCP Handler 2 :113: Next first byte: \(packet[0]) Size: \(self.streamBuffer?.count ?? 0) Length: \(length)")
+                    }
+                }
+                size = self.streamBuffer!.count
+                if size > 14{
+                    length = ByteUtil.bytesToUInt16(self.streamBuffer![12...13])
+                }
+                else{
+                    break
                 }
             }
             
-            if self.streamBuffer!.count > 14{
-                length = ByteUtil.bytesToUInt16(self.streamBuffer![12...13])
+            
+            if DEBUG{
+                print("TCP Handler 1 :113: Next first byte: \(self.streamBuffer![0]) Size: \(self.streamBuffer?.count ?? 0) Length: \(length) RS: \(data.count)")
             }
-            else{
-                break
-            }
-        }
-
-        
-        if DEBUG{
-            print("TCP Handler 1 :113: Next first byte: \(self.streamBuffer![0]) Size: \(self.streamBuffer?.count ?? 0) Length: \(length) RS: \(data.count)")
         }
         
     }
@@ -57,7 +61,7 @@ class TCPRTPParser: RTPParser {
     func processStream(_ data: inout [UInt8]){
         
         // Sequence number
-         let sequence = ByteUtil.bytesToUInt16(data[2...3])
+        let sequence = ByteUtil.bytesToUInt16(data[2...3])
         // Timestamp
         var timestamp = ByteUtil.bytesToUInt32(data[4...7])
         // Synchronization source (SSRC)

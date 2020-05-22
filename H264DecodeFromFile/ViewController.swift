@@ -155,7 +155,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //        }
     }
     func SendClientDimension(){
-        let x = TCPClient(host: "192.168.0.7",port: 5001,delegate: nil)
+        let x = TCPClient(host: AOSPServer,port: 5001,delegate: nil)
         let screenSize     = UIScreen.main.bounds
         print("display:\(screenSize.width).\(screenSize.height).640\n".utf8)
         if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).640\n".utf8)){

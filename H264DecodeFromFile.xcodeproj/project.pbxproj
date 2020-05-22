@@ -521,6 +521,7 @@
 			baseConfigurationReference = 36C976C2DED4C895C6C72B68 /* Pods-H264DecodeFromFile.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CHDJX2H9Y9;
 				INFOPLIST_FILE = H264DecodeFromFile/Info.plist;
@@ -528,8 +529,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile33;
+				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile99;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -540,6 +542,7 @@
 			baseConfigurationReference = AE4491FEFC9055749413AFA7 /* Pods-H264DecodeFromFile.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = CHDJX2H9Y9;
 				INFOPLIST_FILE = H264DecodeFromFile/Info.plist;
@@ -547,8 +550,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile33;
+				PRODUCT_BUNDLE_IDENTIFIER = cps.H264DecodeFromFile99;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

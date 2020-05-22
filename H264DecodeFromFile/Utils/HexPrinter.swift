@@ -16,7 +16,7 @@ extension Data {
     }
 
     func hex(options: HexEncodingOptions = []) {
-        let format = options.contains(.upperCase) ? "%02hhX" : "%02hhx"
+        let format = options.contains(.upperCase) ? "%02hhX " : "%02hhx "
         print( map { String(format: format, $0) }.joined())
     }
 }
