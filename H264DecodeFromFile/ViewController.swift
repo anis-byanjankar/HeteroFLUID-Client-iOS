@@ -234,7 +234,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         
         //Update the payload and send the RTP packet in RTP.payload
-            self.videoProcessor.sync {
+            self.videoProcessor.async {
                 self.receivedRawVideoFrame(&rawPayload)
             }
         if DEBUG{
