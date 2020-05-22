@@ -9,8 +9,7 @@
 import Foundation
 class TCPRTPParser: RTPParser {
     var streamBuffer: [UInt8]? = nil
-    let receivedDataHandlerQueue = DispatchQueue(label: "TCP Data Handler",qos: .userInitiated)
-    let stremeProcessor = DispatchQueue(label: "TCP Stream Processor",qos: .userInteractive)
+    let packetProcessor = DispatchQueue(label: "Stream to Packet",qos: .userInteractive)
     let packetHandler = DispatchQueue(label: "TCP Stream Processor",qos: .userInteractive)
     var size: Int = 0
     
@@ -35,8 +34,8 @@ class TCPRTPParser: RTPParser {
                 self.streamBuffer!.removeSubrange(0..<Int(length))
                 
                 
-                self.stremeProcessor.async {
-                    self.processStream(&packet)
+                self.packetProcessor.async {
+                    self.processPacket(&packet)
                     if self.DEBUG{
                         print("TCP Handler 2 :113: Next first byte: \(packet[0]) Size: \(self.streamBuffer?.count ?? 0) Length: \(length)")
                     }
@@ -58,7 +57,7 @@ class TCPRTPParser: RTPParser {
         
     }
     
-    func processStream(_ data: inout [UInt8]){
+    func processPacket(_ data: inout [UInt8]){
         
         // Sequence number
         let sequence = ByteUtil.bytesToUInt16(data[2...3])
@@ -81,7 +80,9 @@ class TCPRTPParser: RTPParser {
         
         let packet = RTPPacket(payload: payload, sequence: sequence, ssrc: ssrc, csrc: [], timestamp: timestamp, extensions: nil)
         // No need to send sort the packages as TCP packets are always in order. So delegate the packet.
-        self.delegate?.didReceiveRTPPacket(packet: packet)
+        packetHandler.async {
+            self.delegate?.didReceiveRTPPacket(packet: packet)
+        }
         //        dispatchPacket(packet: packet)
     }
     

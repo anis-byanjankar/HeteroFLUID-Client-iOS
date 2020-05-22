@@ -16,8 +16,6 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     let DEBUG: Bool = false;
     let videoProcessor = DispatchQueue(label: "VideoDecoder",qos: .userInteractive)
     let displayProcessor = DispatchQueue(label: "Display Blit Processor",qos: .userInteractive)
-    let defragProcessor = DispatchQueue(label: "Defrag Processor",qos: .userInteractive)
-
     
     var formatDesc: CMVideoFormatDescription?
     var decompressionSession: VTDecompressionSession?
@@ -35,7 +33,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     
     var source: String? = "H264"
     var AOSPServer: String = "192.168.0.7"
-    var port: UInt16 = 9879
+    var port: UInt16 = 10000
     
     var tcpClient: TCPClient? = nil
     var tcpClientNIO: TCPClientNIO? = nil
@@ -107,8 +105,8 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //              fxnA() // Dispatch Thread testing.
         
         //        sleep(2)
-        //        self.receivedRawVideoFrame(&SPS)
-        //        self.receivedRawVideoFrame(&PPS)
+        //        self.receivedIndividualNalFrame(&SPS)
+        //        self.receivedIndividualNalFrame(&PPS)
         
     }
     
@@ -214,7 +212,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                 //Update the payload and send the RTP packet
                 var tmpNALUPacket = packetSend!
                     self.videoProcessor.async {
-                        self.receivedRawVideoFrame(&tmpNALUPacket)
+                        self.receivedIndividualNalFrame(&tmpNALUPacket)
                     }
                 
                 
@@ -235,7 +233,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         //Update the payload and send the RTP packet in RTP.payload
             self.videoProcessor.async {
-                self.receivedRawVideoFrame(&rawPayload)
+                self.receivedIndividualNalFrame(&rawPayload)
             }
         if DEBUG{
 //            Data(rawPayload).hex()
@@ -243,7 +241,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         
         
-        //        self.receivedRawVideoFrame(&pck)    //This is where we revceive the packet and process it. Here we have to receive the packet.
+        //        self.receivedIndividualNalFrame(&pck)    //This is where we revceive the packet and process it. Here we have to receive the packet.
         
         
     }
@@ -257,9 +255,8 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         }
         //packet.payload.hex()
         //1. Got Data and parsed datagram packet into RTP packet. Now this is send to Defragmnenter.
-        defragProcessor.async {
-            self.defragmenter?.didReceiveRTPPacket(rtpPacket: packet)
-        }
+        self.defragmenter?.didReceiveRTPPacket(rtpPacket: packet)
+        
         
     }
     
@@ -306,12 +303,12 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         videoReader.openVideoFile(fileURL)
         
         while var packet = videoReader.netPacket() {//Comment 3: Read a NAL packet from the file. This is the funtion that we need to simulate form network.
-            self.receivedRawVideoFrame(&packet)    //This is where we revceive the packet and process it. Here we have to receive the packet.
+            self.receivedIndividualNalFrame(&packet)    //This is where we revceive the packet and process it. Here we have to receive the packet.
         }
         
     }
     
-    func receivedRawVideoFrame(_ videoPacket: inout VideoPacket) {
+    func receivedIndividualNalFrame(_ videoPacket: inout VideoPacket) {
         
         //        _ = Data(videoPacket).hex()
         //Comment 4: Replace start code with nal size for iOS.

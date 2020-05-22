@@ -19,6 +19,9 @@ class AVCDefragmenter {
     // NALU fragments
     private var fragmentedNALU: FragmentedNALU? = nil
     
+    let nalUnitsSeparator = DispatchQueue(label: "nalUnitsSeparator",qos: .userInteractive)
+
+    
     //This where we receive RTP packets. Form here on we try to convert it into NAL Units
     //    func didReceiveRTPPacket(_ data: Data?, timestamp: CMTime, sequenceNumber: UInt16) {
     func didReceiveRTPPacket(rtpPacket: RTPPacket) {
@@ -41,7 +44,9 @@ class AVCDefragmenter {
             return
         }
         //For packet containing single NAL Unit.
-        delegate?.didReceiveNALUnit(&nalu)
+        nalUnitsSeparator.async {
+            self.delegate?.didReceiveNALUnit(&nalu)
+        }
     }
     
     // This function assembles complete NAL units
@@ -70,6 +75,8 @@ class AVCDefragmenter {
             return
         }
         var nalUnitToSend: NALUnit = AVCNALUnit(data: unitData, timestamp: nalu.timestamp)
-        delegate?.didReceiveNALUnit(&nalUnitToSend)
+        nalUnitsSeparator.async {
+            self.delegate?.didReceiveNALUnit(&nalUnitToSend)
+        }
     }
 }
