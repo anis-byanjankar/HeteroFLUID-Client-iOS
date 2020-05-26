@@ -67,7 +67,7 @@ public class TCPClientNIO: NALSource {
         } catch let error {
             print("\(TAG): Error: \(error.localizedDescription)")
             sleep(2)
-            print("Reconnecting...")
+            print("\nReconnecting...")
             try start()
             throw error
         }

@@ -10,7 +10,6 @@ import Foundation
 class TCPRTPParser: RTPParser {
     var streamBuffer: [UInt8]? = nil
     let packetProcessor = DispatchQueue(label: "Stream to Packet",qos: .userInteractive)
-    let packetHandler = DispatchQueue(label: "TCP Stream Processor",qos: .userInteractive)
     var size: Int = 0
     
     override func datagramReceived (_ data: [UInt8]) {
@@ -80,7 +79,7 @@ class TCPRTPParser: RTPParser {
         
         let packet = RTPPacket(payload: payload, sequence: sequence, ssrc: ssrc, csrc: [], timestamp: timestamp, extensions: nil)
         // No need to send sort the packages as TCP packets are always in order. So delegate the packet.
-        packetHandler.async {
+        rtpProcessor.async {
             self.delegate?.didReceiveRTPPacket(packet: packet)
         }
         //        dispatchPacket(packet: packet)

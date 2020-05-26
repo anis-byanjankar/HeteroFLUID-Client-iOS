@@ -34,6 +34,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     var source: String? = "H264"
     var AOSPServer: String = "192.168.0.7"
     var port: UInt16 = 10000
+    var dimPort: UInt16 = 5001
     
     var tcpClient: TCPClient? = nil
     var tcpClientNIO: TCPClientNIO? = nil
@@ -46,13 +47,8 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        //Send Static SPS AND PPS
-        //                var SPS: [UInt8] = [0, 0, 0, 1, // header
-        //                0x67, 0x42, 0x80, 0x0a, 0xda,
-        //                0x01, 0x68, 0x05, 0x27, 0xe6,
-        //                0x80, 0x6d, 0x0a, 0x13, 0x50]
-        //                var PPS: [UInt8] = [0, 0, 0, 1, // header
-        //                0x68, 0xce, 0x06, 0xf2]
+        // 0. Display Congiguration
+        self.printConfig()
         
         // 1. Fix the RTP Parser
         switch self.mode{
@@ -153,7 +149,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         //        }
     }
     func SendClientDimension(){
-        let x = TCPClient(host: AOSPServer,port: 5001,delegate: nil)
+        let x = TCPClient(host: AOSPServer,port: dimPort,delegate: nil)
         let screenSize     = UIScreen.main.bounds
         print("display:\(screenSize.width).\(screenSize.height).640\n".utf8)
         if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).640\n".utf8)){
@@ -173,6 +169,22 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         }
         
     }
+    func printConfig(){
+        print("*********************************************************************")
+        if self.networkModeNIO{
+            print("Network Mode: Swift NIO.")
+        }
+        else{
+            print("Network Mode: Network Framework.")
+        }
+        print("Server IP   : \(self.AOSPServer)")
+        print("Dim Port    : \(self.dimPort)")
+        print("TCP Port    : \(self.port)")
+        print("*********************************************************************")
+
+    }
+    
+    
     //Here we receive the concatenated NAL Units
     func didReceiveNALUnit(_ nalu: inout NALUnit) {
         //        print("NAL UNITS RECEIVED!!!!")

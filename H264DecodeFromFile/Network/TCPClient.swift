@@ -11,6 +11,9 @@ class TCPClient {
     var connected: Bool = false
     var delegate: TransportDelegate?
     
+    let packetProcessor = DispatchQueue(label: "TCP Client Packet Processing Thread",qos: .userInteractive)
+
+    
     init(host: String, port: UInt16, delegate: TransportDelegate?) {
         self.host = NWEndpoint.Host(host)
         self.port = NWEndpoint.Port(rawValue: port)!
@@ -54,7 +57,9 @@ class TCPClient {
     private func setupReceive() {
         self.nwConnection?.receive(minimumIncompleteLength: 1, maximumLength: 65536) { (data, _, isComplete, error) in
             if let data = data, !data.isEmpty {
-                self.delegate?.datagramReceived([UInt8] (data))
+                self.packetProcessor.async {
+                    self.delegate?.datagramReceived([UInt8] (data))
+                }
                 
                 if isComplete {
                     print("Connection Completed!!")
