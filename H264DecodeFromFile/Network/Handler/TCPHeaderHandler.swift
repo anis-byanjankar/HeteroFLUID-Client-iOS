@@ -22,7 +22,7 @@ class TCPHeaderHandler: ChannelInboundHandler {
     var TAG: String {
         return String(describing: type(of: self))
     }
-    let byteProcessorWrapper = DispatchQueue(label: "Processor",qos: .background)
+    let byteProcessorWrapper = DispatchQueue(label: "Processor",qos: .userInteractive)
     
     
     public func channelActive(context: ChannelHandlerContext) {

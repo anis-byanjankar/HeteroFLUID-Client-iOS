@@ -26,7 +26,7 @@ struct FragmentedNALU: NALUnit {
             print("\(TAG)\n")
             print("\(TAG) *************************")
             for x in fragments{
-                print("\(TAG) Sequence Number : \(x.sequenceNumber)")
+                print("\(TAG) Sequence Number : \(x.sequenceNumber) Size: \(x.data?.count)")
             }
             print("\(TAG) *************************")
         }

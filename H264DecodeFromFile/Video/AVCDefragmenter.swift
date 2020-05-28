@@ -43,6 +43,12 @@ class AVCDefragmenter {
             didReceiveFU(&fragmentedPacket)
             return
         }
+        //Already collected packets must be released first, else this will cause error.
+        if fragmentedNALU != nil {
+            didAssembleFU(&fragmentedNALU!)
+            fragmentedNALU = nil
+        }
+
         //For packet containing single NAL Unit.
         nalUnitsSeparator.async {
             self.delegate?.didReceiveNALUnit(&nalu)
