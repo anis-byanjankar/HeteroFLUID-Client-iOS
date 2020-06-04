@@ -17,9 +17,7 @@
 		F853AEDD2452CCF30037DDED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F853AEDC2452CCF30037DDED /* Assets.xcassets */; };
 		F853AEE02452CCF30037DDED /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F853AEDE2452CCF30037DDED /* LaunchScreen.storyboard */; };
 		F853AEE82452CD170037DDED /* VideoFileReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F853AEE72452CD170037DDED /* VideoFileReader.swift */; };
-		F853AEEA2452CE150037DDED /* mtv.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEE92452CE150037DDED /* mtv.h264 */; };
 		F853AEEF2452CE440037DDED /* H264.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEEC2452CE430037DDED /* H264.h264 */; };
-		F853AEF02452CE440037DDED /* nature.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F853AEED2452CE440037DDED /* nature.h264 */; };
 		F85DB2A42474BE90001686A8 /* TCPClientNIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */; };
 		F85DB2A62474BEB6001686A8 /* TCPHeaderHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */; };
 		F864F33E247F65840073FA40 /* MissingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F864F33D247F65840073FA40 /* MissingPacket.swift */; };
@@ -42,7 +40,6 @@
 		F8C1A92F24580A9200EA9564 /* FragmentedNALUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A92824580A9200EA9564 /* FragmentedNALUnit.swift */; };
 		F8C1A93124580A9200EA9564 /* NALUnit.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A92A24580A9200EA9564 /* NALUnit.swift */; };
 		F8C1A93424580ACD00EA9564 /* VideoDecoderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A93324580ACD00EA9564 /* VideoDecoderDelegate.swift */; };
-		F8C1A940245BDECA00EA9564 /* out.h264 in Resources */ = {isa = PBXBuildFile; fileRef = F8C1A93F245BDECA00EA9564 /* out.h264 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,9 +57,7 @@
 		F853AEDF2452CCF30037DDED /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F853AEE12452CCF30037DDED /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F853AEE72452CD170037DDED /* VideoFileReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoFileReader.swift; sourceTree = "<group>"; };
-		F853AEE92452CE150037DDED /* mtv.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = mtv.h264; sourceTree = "<group>"; };
 		F853AEEC2452CE430037DDED /* H264.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = H264.h264; sourceTree = "<group>"; };
-		F853AEED2452CE440037DDED /* nature.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = nature.h264; sourceTree = "<group>"; };
 		F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPClientNIO.swift; sourceTree = "<group>"; };
 		F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPHeaderHandler.swift; sourceTree = "<group>"; };
 		F864F33D247F65840073FA40 /* MissingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingPacket.swift; sourceTree = "<group>"; };
@@ -85,7 +80,6 @@
 		F8C1A92824580A9200EA9564 /* FragmentedNALUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FragmentedNALUnit.swift; sourceTree = "<group>"; };
 		F8C1A92A24580A9200EA9564 /* NALUnit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NALUnit.swift; sourceTree = "<group>"; };
 		F8C1A93324580ACD00EA9564 /* VideoDecoderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDecoderDelegate.swift; sourceTree = "<group>"; };
-		F8C1A93F245BDECA00EA9564 /* out.h264 */ = {isa = PBXFileReference; lastKnownFileType = file; path = out.h264; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +123,8 @@
 		F853AED22452CCEE0037DDED /* H264DecodeFromFile */ = {
 			isa = PBXGroup;
 			children = (
+				F884F1E9248914DB000486A4 /* Config */,
+				F884F1E82489143D000486A4 /* Junk */,
 				F864F33C247F65540073FA40 /* Test */,
 				F8C1A9062457F44700EA9564 /* Delegates */,
 				F8C1A9102457FCBE00EA9564 /* Video */,
@@ -136,19 +132,13 @@
 				F8C1A8FC2457BF2700EA9564 /* Utils */,
 				F8C1A8F524568B3B00EA9564 /* Network */,
 				F853AEEC2452CE430037DDED /* H264.h264 */,
-				F8C1A93F245BDECA00EA9564 /* out.h264 */,
-				F853AEED2452CE440037DDED /* nature.h264 */,
-				F853AEE92452CE150037DDED /* mtv.h264 */,
 				F853AED32452CCEE0037DDED /* AppDelegate.swift */,
 				F853AED52452CCEE0037DDED /* SceneDelegate.swift */,
 				F853AED72452CCEE0037DDED /* ViewController.swift */,
-				F853AEE72452CD170037DDED /* VideoFileReader.swift */,
 				F853AED92452CCEE0037DDED /* Main.storyboard */,
 				F853AEDC2452CCF30037DDED /* Assets.xcassets */,
 				F853AEDE2452CCF30037DDED /* LaunchScreen.storyboard */,
 				F853AEE12452CCF30037DDED /* Info.plist */,
-				F884F1E42488BDEF000486A4 /* Config.plist */,
-				F884F1E62488BF47000486A4 /* Config.swift */,
 			);
 			path = H264DecodeFromFile;
 			sourceTree = "<group>";
@@ -170,6 +160,31 @@
 			path = Test;
 			sourceTree = "<group>";
 		};
+		F884F1E82489143D000486A4 /* Junk */ = {
+			isa = PBXGroup;
+			children = (
+				F8C1A8F824568B8200EA9564 /* UDPServer.swift */,
+			);
+			path = Junk;
+			sourceTree = "<group>";
+		};
+		F884F1E9248914DB000486A4 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				F884F1E42488BDEF000486A4 /* Config.plist */,
+				F884F1E62488BF47000486A4 /* Config.swift */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		F884F1EA24891610000486A4 /* DataStructure */ = {
+			isa = PBXGroup;
+			children = (
+				F8C1A9042457F40000EA9564 /* RTPPacket.swift */,
+			);
+			path = DataStructure;
+			sourceTree = "<group>";
+		};
 		F89F0ECE95CD141F20598DAF /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -186,9 +201,6 @@
 				F81A86DC2464FC7800E7CDBC /* TCPClient.swift */,
 				F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */,
 				F884F1AD247FEE54000486A4 /* UDPServerNIO.swift */,
-				F8C1A8F824568B8200EA9564 /* UDPServer.swift */,
-				F8C1A8FA24568B9600EA9564 /* Connection.swift */,
-				F8C1A9212458003F00EA9564 /* Server.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -196,8 +208,9 @@
 		F8C1A8FC2457BF2700EA9564 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				F8C1A93D24580E2900EA9564 /* DataStructure */,
 				F8C1A90A2457F82500EA9564 /* HexPrinter.swift */,
+				F853AEE72452CD170037DDED /* VideoFileReader.swift */,
+				F8C1A90E2457FC2D00EA9564 /* ByteUtil.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -205,7 +218,9 @@
 		F8C1A8FF2457DA2C00EA9564 /* RTP */ = {
 			isa = PBXGroup;
 			children = (
-				F8C1A9092457F62400EA9564 /* Processor */,
+				F884F1EA24891610000486A4 /* DataStructure */,
+				F8C1A9002457DA5400EA9564 /* RTPParser.swift */,
+				F81A86DE246501E100E7CDBC /* TCPRTPParser.swift */,
 			);
 			path = RTP;
 			sourceTree = "<group>";
@@ -215,23 +230,17 @@
 			children = (
 				F8C1A9022457DA9900EA9564 /* TransportDelegate.swift */,
 				F8C1A93324580ACD00EA9564 /* VideoDecoderDelegate.swift */,
+				F8C1A8FA24568B9600EA9564 /* Connection.swift */,
+				F8C1A9212458003F00EA9564 /* Server.swift */,
 				F8C1A90C2457FB1400EA9564 /* RTPPacketDelegate.swift */,
 			);
 			path = Delegates;
 			sourceTree = "<group>";
 		};
-		F8C1A9092457F62400EA9564 /* Processor */ = {
-			isa = PBXGroup;
-			children = (
-				F8C1A9002457DA5400EA9564 /* RTPParser.swift */,
-				F81A86DE246501E100E7CDBC /* TCPRTPParser.swift */,
-			);
-			path = Processor;
-			sourceTree = "<group>";
-		};
 		F8C1A9102457FCBE00EA9564 /* Video */ = {
 			isa = PBXGroup;
 			children = (
+				F8C1A93D24580E2900EA9564 /* DataStructure */,
 				F8C1A92324580A6800EA9564 /* AVCDefragmenter.swift */,
 				F8C1A92824580A9200EA9564 /* FragmentedNALUnit.swift */,
 			);
@@ -241,21 +250,11 @@
 		F8C1A93D24580E2900EA9564 /* DataStructure */ = {
 			isa = PBXGroup;
 			children = (
-				F8C1A93E2458169300EA9564 /* Video */,
-				F8C1A90E2457FC2D00EA9564 /* ByteUtil.swift */,
-				F8C1A9042457F40000EA9564 /* RTPPacket.swift */,
-			);
-			path = DataStructure;
-			sourceTree = "<group>";
-		};
-		F8C1A93E2458169300EA9564 /* Video */ = {
-			isa = PBXGroup;
-			children = (
 				F8C1A92524580A9200EA9564 /* AVCNALUFragment.swift */,
 				F8C1A92724580A9200EA9564 /* AVCNALUnit.swift */,
 				F8C1A92A24580A9200EA9564 /* NALUnit.swift */,
 			);
-			path = Video;
+			path = DataStructure;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -320,12 +319,9 @@
 			files = (
 				F853AEEF2452CE440037DDED /* H264.h264 in Resources */,
 				F853AEE02452CCF30037DDED /* LaunchScreen.storyboard in Resources */,
-				F853AEEA2452CE150037DDED /* mtv.h264 in Resources */,
 				F853AEDD2452CCF30037DDED /* Assets.xcassets in Resources */,
 				F884F1E52488BDF0000486A4 /* Config.plist in Resources */,
-				F8C1A940245BDECA00EA9564 /* out.h264 in Resources */,
 				F853AEDB2452CCEE0037DDED /* Main.storyboard in Resources */,
-				F853AEF02452CE440037DDED /* nature.h264 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

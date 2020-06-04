@@ -16,8 +16,6 @@ public class UDPServerNIO: NALSource {
     var DEBUG: Bool! = false;
     
     static var delegate: TransportDelegate?
-
-    var networkType: String? // Defines enum TCP, UDP, and Dual.
     
     let group = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
     private var host: String?
