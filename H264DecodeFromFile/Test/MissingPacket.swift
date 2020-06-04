@@ -92,4 +92,51 @@ class MissingPacket{
         
     }
     
+    //Not used function. Used for testing.
+    func separatePackets(_ videoPacket: inout [UInt8]){
+        //********************************************************************************
+        //TODO:     Get the data and parse it into the normal format.
+        //Input:    xxxxxMxxxxxxxMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //Output:
+        //          Mxxxxx
+        //          Mxxxxxxx
+        //          Mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+        //********************************************************************************
+        
+        //********************************************************************************
+        //Static Test for Adding 0x00 0x00 0x00 0x01 padding
+        //********************************************************************************
+        //var dummy: [UInt8] = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFA,0x1B]
+        //self.separatePackets(&dummy);
+        //********************************************************************************
+        
+        let startCode: [UInt8] = [0,0,0,1]
+        
+        //find second start code,NO StartCode: STRIPPED FROM AOSP , so startIndex = 0
+        var first = true
+        var startIndex = 1
+        
+        while ((startIndex + 3) < videoPacket.count) {
+            if Array(videoPacket[startIndex...startIndex+3]) == startCode {
+                
+                var packet = Array(videoPacket[0..<startIndex])
+                videoPacket.removeSubrange(0..<startIndex)
+                if first == true{
+                    packet = [UInt8] ([0,0,0,1]) + packet
+                    first = false
+                }
+                
+                Data(packet).hex()
+                
+                startIndex = 1
+                
+            }
+            startIndex += 1
+        }
+        if first == true{
+            videoPacket = [UInt8] ([0,0,0,1]) + videoPacket
+            first = false
+        }
+        Data(videoPacket).hex()
+    }
 }

@@ -20,7 +20,7 @@ class RTPParser: TransportDelegate {
     
     var delegate: RTPPacketDelegate? = nil
     
-    let QUEUE_CAPACITY = 10
+    let QUEUE_CAPACITY = 5
     var expectedRTPPacketSequence: UInt16? = nil
     var rtpPacketOrderQueue: [RTPPacket] = []
     
@@ -57,23 +57,16 @@ class RTPParser: TransportDelegate {
         }
         
         let payload = Data(data[headerLength...])
-        
-        
-        /* Debug Start*/
-        //        if headerLength>12{//Check if there is extension for the header.
-        //            hex(data: data)
-        //        }
-        /* Debug End*/
-        
+
         let packet = RTPPacket(payload: payload, sequence: sequence, ssrc: ssrc, csrc: csrc, timestamp: timestamp, extensions: extensions)
-        ReceiveRTPPacket(packet)
+        pushToMinDelayBuffer(packet)
     }
     
     
     
     // Decides whether a packet should be dispatched to the delegate
     // right away or appended to the queue
-    func ReceiveRTPPacket (_ packet: RTPPacket) {
+    func pushToMinDelayBuffer (_ packet: RTPPacket) {
         
         receivedPackets = receivedPackets+1
         
@@ -85,7 +78,8 @@ class RTPParser: TransportDelegate {
         
         // Packets that arrive after a packet with higher
         // sequence number are dropped
-        if packet.sequence < expectedRTPPacketSequence! && expectedRTPPacketSequence! < UInt16.max - UInt16(QUEUE_CAPACITY) && packet.sequence <= QUEUE_CAPACITY {
+//        if packet.sequence < expectedRTPPacketSequence! && expectedRTPPacketSequence! < UInt16.max - UInt16(QUEUE_CAPACITY) && packet.sequence <= QUEUE_CAPACITY {
+        if packet.sequence < expectedRTPPacketSequence!{
             print("\(TAG) Dropping out-of-order packet (expected \(expectedRTPPacketSequence!) got \(packet.sequence))")
             return
         }
@@ -115,13 +109,20 @@ class RTPParser: TransportDelegate {
         // packet to avoid skipping some packets forever that would
         // consume space in the queue indefinitely
         // For this to work, the queue needs to be ordered
-        if rtpPacketOrderQueue.first!.sequence == expectedRTPPacketSequence || rtpPacketOrderQueue.count >= QUEUE_CAPACITY {
-            
+        if rtpPacketOrderQueue.first!.sequence == expectedRTPPacketSequence{
+            //if rtpPacketOrderQueue.first!.sequence == expectedRTPPacketSequence || rtpPacketOrderQueue.count >= QUEUE_CAPACITY {
             repeat {
                 dispatchPacket(packet: rtpPacketOrderQueue.removeFirst())
             }
-                while (rtpPacketOrderQueue.first?.sequence == expectedRTPPacketSequence || rtpPacketOrderQueue.count >= QUEUE_CAPACITY)
-            
+            while (rtpPacketOrderQueue.first?.sequence == expectedRTPPacketSequence )
+            //while (rtpPacketOrderQueue.first?.sequence == expectedRTPPacketSequence || rtpPacketOrderQueue.count >= QUEUE_CAPACITY)
+        }
+        else if rtpPacketOrderQueue.count >= QUEUE_CAPACITY {
+            rtpPacketOrderQueue.removeAll()
+            print("QUEUE EMPTY")
+            pushToQueue(packet)
+            expectedRTPPacketSequence = packet.sequence
+
         }
         
     }
@@ -152,56 +153,4 @@ class RTPParser: TransportDelegate {
             self.delegate?.didReceiveRTPPacket(packet: packet)
         }
     }
-    
-    
-    //Not used function. Used for testing.
-    func separatePackets(_ videoPacket: inout [UInt8]){
-        //********************************************************************************
-        //TODO:     Get the data and parse it into the normal format.
-        //Input:    xxxxxMxxxxxxxMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        //Output:
-        //          Mxxxxx
-        //          Mxxxxxxx
-        //          Mxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        //********************************************************************************
-        
-        //********************************************************************************
-        //Static Test for Adding 0x00 0x00 0x00 0x01 padding
-        //********************************************************************************
-        //var dummy: [UInt8] = [0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0x00,0x00,0x00,0x01,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFA,0x1B]
-        //self.separatePackets(&dummy);
-        //********************************************************************************
-        
-        let startCode: [UInt8] = [0,0,0,1]
-        
-        //find second start code,NO StartCode: STRIPPED FROM AOSP , so startIndex = 0
-        var first = true
-        var startIndex = 1
-        
-        while ((startIndex + 3) < videoPacket.count) {
-            if Array(videoPacket[startIndex...startIndex+3]) == startCode {
-                
-                var packet = Array(videoPacket[0..<startIndex])
-                videoPacket.removeSubrange(0..<startIndex)
-                if first == true{
-                    packet = [UInt8] ([0,0,0,1]) + packet
-                    first = false
-                }
-                
-                Data(packet).hex()
-                
-                startIndex = 1
-                
-            }
-            startIndex += 1
-        }
-        if first == true{
-            videoPacket = [UInt8] ([0,0,0,1]) + videoPacket
-            first = false
-        }
-        
-        Data(videoPacket).hex()
-    }
-    
-    
 }
