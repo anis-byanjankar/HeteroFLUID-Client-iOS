@@ -44,7 +44,7 @@ class TCPClient {
             self.setupReceive()
             let r: String = "Client Says Hello!"
             _ = self.send(data: r.data(using: .utf8)!)
-            print("Client connection ready")
+            print("TCPClient: Client connection ready")
         case .failed(let error):
             connectionDidFail(error: error)
         default:

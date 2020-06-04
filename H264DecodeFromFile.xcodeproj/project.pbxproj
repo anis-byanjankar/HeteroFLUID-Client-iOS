@@ -23,6 +23,10 @@
 		F85DB2A42474BE90001686A8 /* TCPClientNIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */; };
 		F85DB2A62474BEB6001686A8 /* TCPHeaderHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */; };
 		F864F33E247F65840073FA40 /* MissingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F864F33D247F65840073FA40 /* MissingPacket.swift */; };
+		F884F1AE247FEE54000486A4 /* UDPServerNIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F884F1AD247FEE54000486A4 /* UDPServerNIO.swift */; };
+		F884F1E2248760E9000486A4 /* UDPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F884F1E1248760E9000486A4 /* UDPHandler.swift */; };
+		F884F1E52488BDF0000486A4 /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = F884F1E42488BDEF000486A4 /* Config.plist */; };
+		F884F1E72488BF47000486A4 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = F884F1E62488BF47000486A4 /* Config.swift */; };
 		F8C1A8F924568B8200EA9564 /* UDPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8F824568B8200EA9564 /* UDPServer.swift */; };
 		F8C1A8FB24568B9600EA9564 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A8FA24568B9600EA9564 /* Connection.swift */; };
 		F8C1A9012457DA5400EA9564 /* RTPParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C1A9002457DA5400EA9564 /* RTPParser.swift */; };
@@ -62,6 +66,10 @@
 		F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPClientNIO.swift; sourceTree = "<group>"; };
 		F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPHeaderHandler.swift; sourceTree = "<group>"; };
 		F864F33D247F65840073FA40 /* MissingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingPacket.swift; sourceTree = "<group>"; };
+		F884F1AD247FEE54000486A4 /* UDPServerNIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPServerNIO.swift; sourceTree = "<group>"; };
+		F884F1E1248760E9000486A4 /* UDPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPHandler.swift; sourceTree = "<group>"; };
+		F884F1E42488BDEF000486A4 /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
+		F884F1E62488BF47000486A4 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		F8C1A8F824568B8200EA9564 /* UDPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPServer.swift; sourceTree = "<group>"; };
 		F8C1A8FA24568B9600EA9564 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		F8C1A9002457DA5400EA9564 /* RTPParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RTPParser.swift; sourceTree = "<group>"; };
@@ -139,6 +147,8 @@
 				F853AEDC2452CCF30037DDED /* Assets.xcassets */,
 				F853AEDE2452CCF30037DDED /* LaunchScreen.storyboard */,
 				F853AEE12452CCF30037DDED /* Info.plist */,
+				F884F1E42488BDEF000486A4 /* Config.plist */,
+				F884F1E62488BF47000486A4 /* Config.swift */,
 			);
 			path = H264DecodeFromFile;
 			sourceTree = "<group>";
@@ -147,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */,
+				F884F1E1248760E9000486A4 /* UDPHandler.swift */,
 			);
 			path = Handler;
 			sourceTree = "<group>";
@@ -174,6 +185,7 @@
 				F85DB2A72474BEBA001686A8 /* Handler */,
 				F81A86DC2464FC7800E7CDBC /* TCPClient.swift */,
 				F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */,
+				F884F1AD247FEE54000486A4 /* UDPServerNIO.swift */,
 				F8C1A8F824568B8200EA9564 /* UDPServer.swift */,
 				F8C1A8FA24568B9600EA9564 /* Connection.swift */,
 				F8C1A9212458003F00EA9564 /* Server.swift */,
@@ -310,6 +322,7 @@
 				F853AEE02452CCF30037DDED /* LaunchScreen.storyboard in Resources */,
 				F853AEEA2452CE150037DDED /* mtv.h264 in Resources */,
 				F853AEDD2452CCF30037DDED /* Assets.xcassets in Resources */,
+				F884F1E52488BDF0000486A4 /* Config.plist in Resources */,
 				F8C1A940245BDECA00EA9564 /* out.h264 in Resources */,
 				F853AEDB2452CCEE0037DDED /* Main.storyboard in Resources */,
 				F853AEF02452CE440037DDED /* nature.h264 in Resources */,
@@ -367,6 +380,7 @@
 			files = (
 				F8C1A92E24580A9200EA9564 /* AVCNALUnit.swift in Sources */,
 				F85DB2A42474BE90001686A8 /* TCPClientNIO.swift in Sources */,
+				F884F1E72488BF47000486A4 /* Config.swift in Sources */,
 				F8C1A93124580A9200EA9564 /* NALUnit.swift in Sources */,
 				F8C1A93424580ACD00EA9564 /* VideoDecoderDelegate.swift in Sources */,
 				F8C1A8F924568B8200EA9564 /* UDPServer.swift in Sources */,
@@ -378,8 +392,10 @@
 				F8C1A90D2457FB1400EA9564 /* RTPPacketDelegate.swift in Sources */,
 				F8C1A90B2457F82500EA9564 /* HexPrinter.swift in Sources */,
 				F8C1A9032457DA9900EA9564 /* TransportDelegate.swift in Sources */,
+				F884F1AE247FEE54000486A4 /* UDPServerNIO.swift in Sources */,
 				F853AED42452CCEE0037DDED /* AppDelegate.swift in Sources */,
 				F8C1A9222458003F00EA9564 /* Server.swift in Sources */,
+				F884F1E2248760E9000486A4 /* UDPHandler.swift in Sources */,
 				F8C1A92F24580A9200EA9564 /* FragmentedNALUnit.swift in Sources */,
 				F864F33E247F65840073FA40 /* MissingPacket.swift in Sources */,
 				F85DB2A62474BEB6001686A8 /* TCPHeaderHandler.swift in Sources */,

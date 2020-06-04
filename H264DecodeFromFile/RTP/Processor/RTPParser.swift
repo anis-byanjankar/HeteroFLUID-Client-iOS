@@ -66,7 +66,6 @@ class RTPParser: TransportDelegate {
         /* Debug End*/
         
         let packet = RTPPacket(payload: payload, sequence: sequence, ssrc: ssrc, csrc: csrc, timestamp: timestamp, extensions: extensions)
-        
         ReceiveRTPPacket(packet)
     }
     
@@ -95,7 +94,7 @@ class RTPParser: TransportDelegate {
         // flush the queue
         if expectedRTPPacketSequence == packet.sequence {
             if DEBUG{
-                print("\(TAG) 1Expected Packet!!")
+                print("\(TAG) Expected Packet!!")
                 
             }
             dispatchPacket(packet: packet)

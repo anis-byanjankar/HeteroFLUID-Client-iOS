@@ -14,6 +14,8 @@ import AVFoundation
 class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     let TAG: String = "ViewController"
     let DEBUG: Bool = false;
+    
+    var config: Config? = nil
     let videoProcessor = DispatchQueue(label: "VideoDecoder",qos: .userInteractive)
     let displayProcessor = DispatchQueue(label: "Display Blit Processor",qos: .userInteractive)
     
@@ -32,20 +34,35 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     
     
     var source: String? = "H264"
-    var AOSPServer: String = "192.168.0.7"
-    var port: UInt16 = 10000
-    var dimPort: UInt16 = 5001
     
-    var tcpClient: TCPClient? = nil
+    var AOSPServer: String!   = nil
+    var port: UInt16!         = nil
+    var dimPort: UInt16!      = nil
+    var mode: String!         = nil
+    var networkModeNIO: Bool! = nil
+    
+    var tcpClient: TCPClient?       = nil
     var tcpClientNIO: TCPClientNIO? = nil
-
-    
-    let mode: String = "TCP"
-    let networkModeNIO: Bool = true
+    var udpServer: UDPServerNIO?    = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        if  let path        = Bundle.main.path(forResource: "Config", ofType: "plist"),
+            let xml         = FileManager.default.contents(atPath: path)
+            
+        {
+            self.config = try? PropertyListDecoder().decode(Config.self, from: xml)
+            print("Configuration Loaded.")
+        }
+        
+        self.AOSPServer     = self.config!.AOSPServer
+        self.port           = self.config!.DataPort
+        self.dimPort        = self.config!.ControlPort
+        self.networkModeNIO = self.config!.NIO
+        self.mode           = self.config!.NetworkMode
+        //Configuration Load from plist Complete.
         
         // 0. Display Congiguration
         self.printConfig()
@@ -61,26 +78,32 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             break
         }
         
-        
-        if self.networkModeNIO {
-            self.SendClientDimension()//Send the dimension of device to android.
-            //SWIFT NIO Version
-            self.tcpClientNIO = TCPClientNIO(host: self.AOSPServer, port: Int(self.port), delegate: self.rtpParser!)
-            try? self.tcpClientNIO?.start()
-        }
-        else{
-            DispatchQueue.global(qos: .userInteractive).async {
+        DispatchQueue.global(qos: .userInteractive).async {
+            
+            if self.networkModeNIO {
                 self.SendClientDimension()//Send the dimension of device to android.
-        
+                //SWIFT NIO Version
+                if self.mode == "UDP"{
+                    self.udpServer = UDPServerNIO(host: "192.168.0.10", port: Int(self.port), delegate: self.rtpParser!)
+                    try? self.udpServer?.start()
+                }else{
+                    self.tcpClientNIO = TCPClientNIO(host: self.AOSPServer, port: Int(self.port), delegate: self.rtpParser!)
+                    try? self.tcpClientNIO?.start()
+                }
+                
+            }
+            else{
+                self.SendClientDimension()//Send the dimension of device to android.
+                
                 self.tcpClient = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
                 //            sleep(2)
-
+                
                 while self.tcpClient?.connected == false{
                     self.tcpClient?.stop()
                     self.tcpClient = TCPClient(host: self.AOSPServer, port: self.port,delegate: self.rtpParser!)
                     sleep(1)
                     self.tcpClient?.delegate = self.rtpParser
-
+                    
                 }
             }
         }
@@ -178,10 +201,11 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             print("Network Mode: Network Framework.")
         }
         print("Server IP   : \(self.AOSPServer)")
+        print("Mode        : \(self.mode)")
         print("Dim Port    : \(self.dimPort)")
         print("TCP Port    : \(self.port)")
         print("*********************************************************************")
-
+        
     }
     
     
@@ -223,13 +247,13 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                 
                 //Update the payload and send the RTP packet
                 var tmpNALUPacket = packetSend!
-                    self.videoProcessor.async {
-                        self.receivedIndividualNalFrame(&tmpNALUPacket)
-                    }
+                self.videoProcessor.async {
+                    self.receivedIndividualNalFrame(&tmpNALUPacket)
+                }
                 
                 
                 if DEBUG{
-//                    Data(packetSend!).hex()
+                    //                    Data(packetSend!).hex()
                 }
                 startIndex = 4
             }
@@ -244,11 +268,11 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         
         
         //Update the payload and send the RTP packet in RTP.payload
-            self.videoProcessor.async {
-                self.receivedIndividualNalFrame(&rawPayload)
-            }
+        self.videoProcessor.async {
+            self.receivedIndividualNalFrame(&rawPayload)
+        }
         if DEBUG{
-//            Data(rawPayload).hex()
+            //            Data(rawPayload).hex()
         }
         
         
