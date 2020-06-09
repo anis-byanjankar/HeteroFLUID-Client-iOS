@@ -84,7 +84,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                 self.SendClientDimension()//Send the dimension of device to android.
                 //SWIFT NIO Version
                 if self.mode == "UDP"{
-                    self.udpServer = UDPServerNIO(host: "192.168.0.10", port: Int(self.port), delegate: self.rtpParser!)
+                    self.udpServer = UDPServerNIO(host: self.config!.ClientIP, port: Int(self.port), delegate: self.rtpParser!)
                     try? self.udpServer?.start()
                 }else{
                     self.tcpClientNIO = TCPClientNIO(host: self.AOSPServer, port: Int(self.port), delegate: self.rtpParser!)
@@ -124,8 +124,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     func SendClientDimension(){
         let x = TCPClient(host: AOSPServer,port: dimPort,delegate: nil)
         let screenSize     = UIScreen.main.bounds
-        print("display:\(screenSize.width).\(screenSize.height).640\n".utf8)
-        if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).640\n".utf8)){
+        if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).324\n".utf8)){
             //        if x.send(data: Data("display:140.280.140\n".utf8)){
             print("Couldn't connect to AOSP TCP Server");
         }

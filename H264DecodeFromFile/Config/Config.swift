@@ -15,4 +15,5 @@ struct Config: Codable{
     var ControlPort:UInt16
     var DataPort:UInt16
     var NIO:Bool
+    var ClientIP:String
 }

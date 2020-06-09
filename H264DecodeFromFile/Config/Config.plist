@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NetworkMode</key>
-	<string>UDP</string>
+	<string>TCP</string>
 	<key>ControlPort</key>
 	<integer>5001</integer>
 	<key>DataPort</key>
@@ -11,6 +11,8 @@
 	<key>NIO</key>
 	<true/>
 	<key>AOSPServer</key>
-	<string>192.168.0.12</string>
+	<string>192.168.0.7</string>
+	<key>ClientIP</key>
+	<string>192.168.0.10</string>
 </dict>
 </plist>
