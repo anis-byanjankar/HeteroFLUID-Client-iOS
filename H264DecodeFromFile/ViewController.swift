@@ -9,13 +9,14 @@
 import UIKit
 import VideoToolbox
 import AVFoundation
+import UIScreenExtension
 
 
 class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     let TAG: String = "ViewController"
     let DEBUG: Bool = false;
     
-    var config: Config? = nil
+    public static var config: Config? = nil
     let videoProcessor = DispatchQueue(label: "VideoDecoder",qos: .userInteractive)
     let displayProcessor = DispatchQueue(label: "Display Blit Processor",qos: .userInteractive)
     
@@ -44,6 +45,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     var tcpClient: TCPClient?       = nil
     var tcpClientNIO: TCPClientNIO? = nil
     var udpServer: UDPServerNIO?    = nil
+    let screenSize                  = UIScreen.main.bounds//UIScreen.main.nativeBounds for native dimentions.
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,15 +55,15 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             let xml         = FileManager.default.contents(atPath: path)
             
         {
-            self.config = try? PropertyListDecoder().decode(Config.self, from: xml)
+            ViewController.config = try? PropertyListDecoder().decode(Config.self, from: xml)
             print("Configuration Loaded.")
         }
         
-        self.AOSPServer     = self.config!.AOSPServer
-        self.port           = self.config!.DataPort
-        self.dimPort        = self.config!.ControlPort
-        self.networkModeNIO = self.config!.NIO
-        self.mode           = self.config!.NetworkMode
+        self.AOSPServer     = ViewController.config!.AOSPServer
+        self.port           = ViewController.config!.DataPort
+        self.dimPort        = ViewController.config!.ControlPort
+        self.networkModeNIO = ViewController.config!.NIO
+        self.mode           = ViewController.config!.NetworkMode
         //Configuration Load from plist Complete.
         
         // 0. Display Congiguration
@@ -84,7 +86,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
                 self.SendClientDimension()//Send the dimension of device to android.
                 //SWIFT NIO Version
                 if self.mode == "UDP"{
-                    self.udpServer = UDPServerNIO(host: self.config!.ClientIP, port: Int(self.port), delegate: self.rtpParser!)
+                    self.udpServer = UDPServerNIO(host: ViewController.config!.ClientIP, port: Int(self.port), delegate: self.rtpParser!)
                     try? self.udpServer?.start()
                 }else{
                     self.tcpClientNIO = TCPClientNIO(host: self.AOSPServer, port: Int(self.port), delegate: self.rtpParser!)
@@ -123,8 +125,8 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     
     func SendClientDimension(){
         let x = TCPClient(host: AOSPServer,port: dimPort,delegate: nil)
-        let screenSize     = UIScreen.main.bounds
-        if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).324\n".utf8)){
+        print("display:\(Int(screenSize.width)).\(Int(screenSize.height)).\(Int(UIScreen.pointsPerInch!))\n".utf8)
+        if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).\(Int(UIScreen.pointsPerInch!))\n".utf8)){
             //        if x.send(data: Data("display:140.280.140\n".utf8)){
             print("Couldn't connect to AOSP TCP Server");
         }
@@ -142,10 +144,11 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         else{
             print("Network Mode: Network Framework.")
         }
-        print("Server IP   : \(self.AOSPServer)")
-        print("Mode        : \(self.mode)")
-        print("Dim Port    : \(self.dimPort)")
-        print("Data Port   : \(self.port)")
+        print("Server IP   : \(String(describing: self.AOSPServer!))")
+        print("Mode        : \(self.mode!)")
+        print("Dim Port    : \(self.dimPort!)")
+        print("Data Port   : \(self.port!)")
+        print("Dimensions  : \(Int(screenSize.width))x\(Int(screenSize.height))")
         print("*********************************************************************")
         
     }
@@ -241,7 +244,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
         videoLayer = AVSampleBufferDisplayLayer()
         
         if let layer = videoLayer {
-            let screenSize     = UIScreen.main.bounds
+            
             let screenWidth    = screenSize.width
             let screenHeight   = screenSize.height
             layer.frame        = CGRect(x: 0, y: 0, width: screenWidth, height: screenHeight)

@@ -9,19 +9,20 @@
 import Foundation
 
 class RTPParser: TransportDelegate {
-    let DEBUG: Bool = false
+    let DEBUG: Bool = true
     let TAG: String = "RTPParser: "
     var mode: String = "UDP"
     
     let rtpProcessor = DispatchQueue(label: "RTP Parser",qos: .userInteractive)
-
-    private var receivedPackets: UInt = 0
-    private var lostPackets: UInt = 0 
+    
+    private var lostPackets: UInt = 0
     
     var delegate: RTPPacketDelegate? = nil
     
-    let QUEUE_CAPACITY = 5
+    let QUEUE_CAPACITY = 50000
     var expectedRTPPacketSequence: UInt16? = nil
+    var lastProcessedPacketTime: UInt32? = nil
+    
     var rtpPacketOrderQueue: [RTPPacket] = []
     
     func datagramReceived (_ data: [UInt8]) {
@@ -57,7 +58,7 @@ class RTPParser: TransportDelegate {
         }
         
         let payload = Data(data[headerLength...])
-
+        
         let packet = RTPPacket(payload: payload, sequence: sequence, ssrc: ssrc, csrc: csrc, timestamp: timestamp, extensions: extensions)
         pushToMinDelayBuffer(packet)
     }
@@ -68,7 +69,6 @@ class RTPParser: TransportDelegate {
     // right away or appended to the queue
     func pushToMinDelayBuffer (_ packet: RTPPacket) {
         
-        receivedPackets = receivedPackets+1
         
         // First packet ever received, do not inspect sequence number
         guard expectedRTPPacketSequence != nil else {
@@ -78,7 +78,7 @@ class RTPParser: TransportDelegate {
         
         // Packets that arrive after a packet with higher
         // sequence number are dropped
-//        if packet.sequence < expectedRTPPacketSequence! && expectedRTPPacketSequence! < UInt16.max - UInt16(QUEUE_CAPACITY) && packet.sequence <= QUEUE_CAPACITY {
+        //        if packet.sequence < expectedRTPPacketSequence! && expectedRTPPacketSequence! < UInt16.max - UInt16(QUEUE_CAPACITY) && packet.sequence <= QUEUE_CAPACITY {
         if packet.sequence < expectedRTPPacketSequence!{
             print("\(TAG) Dropping out-of-order packet (expected \(expectedRTPPacketSequence!) got \(packet.sequence))")
             return
@@ -87,10 +87,6 @@ class RTPParser: TransportDelegate {
         // Next packet in sequence arrived,
         // flush the queue
         if expectedRTPPacketSequence == packet.sequence {
-            if DEBUG{
-                print("\(TAG) Expected Packet!!")
-                
-            }
             dispatchPacket(packet: packet)
             
             return
@@ -99,10 +95,13 @@ class RTPParser: TransportDelegate {
             if DEBUG{
                 print("\(TAG) Expected packet didn't arrive: Expected Packet- \(String(describing: expectedRTPPacketSequence))! Packet Seq - \(packet.sequence) ")
             }
+            if ((packet.timestamp/90 - lastProcessedPacketTime!) > UInt32(ViewController.config!.NODELAY_TIMEOUT)!){
+                rtpPacketOrderQueue.removeAll()
+                print("QUEUE Cleared for having old data.")
+                expectedRTPPacketSequence = packet.sequence
+            }
+            pushToQueue(packet)
         }
-        
-        // Push to queue
-        pushToQueue(packet)
         
         // Check if there are expected packets in the queue
         // already, this needs to happend for every out-of-order
@@ -144,9 +143,10 @@ class RTPParser: TransportDelegate {
     func dispatchPacket (packet: RTPPacket) {
         if mode == "UDP"{
             expectedRTPPacketSequence = UInt16((Int(packet.sequence) + 1) % 65535)
+            lastProcessedPacketTime = packet.timestamp/90
         }
         if DEBUG{
-            print("\(TAG) Sequence Number: \(packet.sequence)")
+            print("\(TAG) DIspatched Sequence Number: \(packet.sequence)")
         }
         
         rtpProcessor.async {

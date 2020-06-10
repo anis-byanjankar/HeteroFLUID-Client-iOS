@@ -7,5 +7,6 @@ target 'H264DecodeFromFile' do
 
   # Pods for H264DecodeFromFile
   pod 'SwiftNIO','~> 2.17.0'
+  pod 'UIScreenExtension', :git => 'https://github.com/marchv/UIScreenExtension'
 
 end

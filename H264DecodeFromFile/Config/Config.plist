@@ -3,16 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>NetworkMode</key>
-	<string>TCP</string>
+	<string>UDP</string>
 	<key>ControlPort</key>
-	<integer>5001</integer>
+	<real>5001</real>
 	<key>DataPort</key>
 	<integer>10000</integer>
 	<key>NIO</key>
 	<true/>
 	<key>AOSPServer</key>
-	<string>192.168.0.7</string>
+	<string>192.168.0.12</string>
 	<key>ClientIP</key>
 	<string>192.168.0.10</string>
+	<key>NODELAY_TIMEOUT</key>
+	<string>200</string>
 </dict>
 </plist>

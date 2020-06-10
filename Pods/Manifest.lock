@@ -11,9 +11,11 @@ PODS:
     - SwiftNIOConcurrencyHelpers (= 2.17.0)
   - SwiftNIOConcurrencyHelpers (2.17.0):
     - CNIOAtomics (= 2.17.0)
+  - UIScreenExtension (0.0.7)
 
 DEPENDENCIES:
   - SwiftNIO (~> 2.17.0)
+  - UIScreenExtension (from `https://github.com/marchv/UIScreenExtension`)
 
 SPEC REPOS:
   trunk:
@@ -24,6 +26,15 @@ SPEC REPOS:
     - SwiftNIO
     - SwiftNIOConcurrencyHelpers
 
+EXTERNAL SOURCES:
+  UIScreenExtension:
+    :git: https://github.com/marchv/UIScreenExtension
+
+CHECKOUT OPTIONS:
+  UIScreenExtension:
+    :commit: a195be2327a2131ba04fa644b575e18bdc2f8e14
+    :git: https://github.com/marchv/UIScreenExtension
+
 SPEC CHECKSUMS:
   CNIOAtomics: 54ece1dffda0a1df5326fdf5e18c71ad51ea4263
   CNIODarwin: 55df13e7978fee38ce0fcd92430f0d03db56f8fe
@@ -31,7 +42,8 @@ SPEC CHECKSUMS:
   CNIOSHA1: 375ed57ef2f83523912f2a656251d2eea30c0732
   SwiftNIO: 4bbf418d785a26d5ea7530923c9b710efcc2aec4
   SwiftNIOConcurrencyHelpers: 5ec28721d99be06fbbe1049e4e27fcab98dbb776
+  UIScreenExtension: d96b7ab20679afe53992ea07aeea84774cd4a116
 
-PODFILE CHECKSUM: ab32567b595c9e54f04e4b2d427d22a08222a8c9
+PODFILE CHECKSUM: 7ca65054894ec3adfb93386935409d00a07a478c
 
 COCOAPODS: 1.8.4

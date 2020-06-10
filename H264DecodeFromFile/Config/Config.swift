@@ -16,4 +16,5 @@ struct Config: Codable{
     var DataPort:UInt16
     var NIO:Bool
     var ClientIP:String
+    var NODELAY_TIMEOUT:String
 }
