@@ -9,7 +9,7 @@
 import Foundation
 
 class RTPParser: TransportDelegate {
-    let DEBUG: Bool = true
+    let DEBUG: Bool = false
     let TAG: String = "RTPParser: "
     var mode: String = "UDP"
     

@@ -21,6 +21,8 @@
 		F85DB2A42474BE90001686A8 /* TCPClientNIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */; };
 		F85DB2A62474BEB6001686A8 /* TCPHeaderHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */; };
 		F864F33E247F65840073FA40 /* MissingPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = F864F33D247F65840073FA40 /* MissingPacket.swift */; };
+		F86CCC7A24A21046005E8C15 /* InputConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86CCC7924A21046005E8C15 /* InputConnector.swift */; };
+		F86CCC7C24A210B4005E8C15 /* TouchMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86CCC7B24A210B4005E8C15 /* TouchMessage.swift */; };
 		F884F1AE247FEE54000486A4 /* UDPServerNIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F884F1AD247FEE54000486A4 /* UDPServerNIO.swift */; };
 		F884F1E2248760E9000486A4 /* UDPHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F884F1E1248760E9000486A4 /* UDPHandler.swift */; };
 		F884F1E52488BDF0000486A4 /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = F884F1E42488BDEF000486A4 /* Config.plist */; };
@@ -61,6 +63,8 @@
 		F85DB2A32474BE8F001686A8 /* TCPClientNIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPClientNIO.swift; sourceTree = "<group>"; };
 		F85DB2A52474BEB6001686A8 /* TCPHeaderHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TCPHeaderHandler.swift; sourceTree = "<group>"; };
 		F864F33D247F65840073FA40 /* MissingPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingPacket.swift; sourceTree = "<group>"; };
+		F86CCC7924A21046005E8C15 /* InputConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputConnector.swift; sourceTree = "<group>"; };
+		F86CCC7B24A210B4005E8C15 /* TouchMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchMessage.swift; sourceTree = "<group>"; };
 		F884F1AD247FEE54000486A4 /* UDPServerNIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPServerNIO.swift; sourceTree = "<group>"; };
 		F884F1E1248760E9000486A4 /* UDPHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPHandler.swift; sourceTree = "<group>"; };
 		F884F1E42488BDEF000486A4 /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
@@ -123,6 +127,7 @@
 		F853AED22452CCEE0037DDED /* H264DecodeFromFile */ = {
 			isa = PBXGroup;
 			children = (
+				F86CCC7824A21021005E8C15 /* InputConnector */,
 				F884F1E9248914DB000486A4 /* Config */,
 				F884F1E82489143D000486A4 /* Junk */,
 				F864F33C247F65540073FA40 /* Test */,
@@ -158,6 +163,15 @@
 				F864F33D247F65840073FA40 /* MissingPacket.swift */,
 			);
 			path = Test;
+			sourceTree = "<group>";
+		};
+		F86CCC7824A21021005E8C15 /* InputConnector */ = {
+			isa = PBXGroup;
+			children = (
+				F86CCC7924A21046005E8C15 /* InputConnector.swift */,
+				F86CCC7B24A210B4005E8C15 /* TouchMessage.swift */,
+			);
+			path = InputConnector;
 			sourceTree = "<group>";
 		};
 		F884F1E82489143D000486A4 /* Junk */ = {
@@ -387,6 +401,7 @@
 				F853AED82452CCEE0037DDED /* ViewController.swift in Sources */,
 				F8C1A90D2457FB1400EA9564 /* RTPPacketDelegate.swift in Sources */,
 				F8C1A90B2457F82500EA9564 /* HexPrinter.swift in Sources */,
+				F86CCC7C24A210B4005E8C15 /* TouchMessage.swift in Sources */,
 				F8C1A9032457DA9900EA9564 /* TransportDelegate.swift in Sources */,
 				F884F1AE247FEE54000486A4 /* UDPServerNIO.swift in Sources */,
 				F853AED42452CCEE0037DDED /* AppDelegate.swift in Sources */,
@@ -400,6 +415,7 @@
 				F8C1A8FB24568B9600EA9564 /* Connection.swift in Sources */,
 				F81A86DF246501E100E7CDBC /* TCPRTPParser.swift in Sources */,
 				F8C1A92424580A6800EA9564 /* AVCDefragmenter.swift in Sources */,
+				F86CCC7A24A21046005E8C15 /* InputConnector.swift in Sources */,
 				F8C1A9012457DA5400EA9564 /* RTPParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -43,10 +43,41 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     var networkModeNIO: Bool! = nil
     
     var tcpClient: TCPClient?       = nil
+    var tcpCommandConnection:TCPClient? = nil
     var tcpClientNIO: TCPClientNIO? = nil
     var udpServer: UDPServerNIO?    = nil
     let screenSize                  = UIScreen.main.bounds//UIScreen.main.nativeBounds for native dimentions.
     
+    let inputConnector = InputConnector()
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let position = touch.location(in: self.view)
+            if DEBUG{
+                print("Touch Down: \(position.x) \(position.y)")
+            }
+            inputConnector.sendTouchInput(x: Int(position.x), y: Int(position.y), z: 0, connection: self.tcpCommandConnection!)
+        }
+    }
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let position = touch.location(in: self.view)
+            if DEBUG{
+                print("Touch Up: \(position.x) \(position.y)")
+            }
+            inputConnector.sendTouchInput(x: Int(position.x), y: Int(position.y), z: 1, connection: self.tcpCommandConnection!)
+        }
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if let touch = touches.first {
+            let position = touch.location(in: self.view)
+            if DEBUG{
+                print("Touch Moved: \(position.x) \(position.y)")
+            }
+            inputConnector.sendTouchInput(x: Int(position.x), y: Int(position.y), z: 2, connection: self.tcpCommandConnection!)
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -79,6 +110,7 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
             self.rtpParser = RTPParser();
             break
         }
+        self.tcpCommandConnection = TCPClient(host: AOSPServer,port: dimPort,delegate: nil)
         
         DispatchQueue.global(qos: .userInteractive).async {
             
@@ -124,14 +156,13 @@ class ViewController: UIViewController,RTPPacketDelegate,VideoDecoderDelegate {
     }
     
     func SendClientDimension(){
-        let x = TCPClient(host: AOSPServer,port: dimPort,delegate: nil)
         print("display:\(Int(screenSize.width)).\(Int(screenSize.height)).\(Int(UIScreen.pointsPerInch!))\n".utf8)
-        if x.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).\(Int(UIScreen.pointsPerInch!))\n".utf8)){
+        if tcpCommandConnection!.send(data: Data("display:\(Int(screenSize.width)).\(Int(screenSize.height)).\(Int(UIScreen.pointsPerInch!))\n".utf8)){
             //        if x.send(data: Data("display:140.280.140\n".utf8)){
-            print("Couldn't connect to AOSP TCP Server");
+            print("TCP Data Sent!!!")
         }
         else{
-            print("TCP Data Sent!!!")
+            print("Couldn't connect to AOSP TCP Server");
         }
         
     }

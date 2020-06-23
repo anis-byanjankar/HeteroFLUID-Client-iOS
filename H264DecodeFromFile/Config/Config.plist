@@ -13,7 +13,7 @@
 	<key>AOSPServer</key>
 	<string>192.168.0.12</string>
 	<key>ClientIP</key>
-	<string>192.168.0.10</string>
+	<string>192.168.0.5</string>
 	<key>NODELAY_TIMEOUT</key>
 	<string>200</string>
 </dict>
